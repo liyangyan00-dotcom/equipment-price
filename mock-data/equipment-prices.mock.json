@@ -1,0 +1,38 @@
+[
+  {
+    "id": "eqp_001",
+    "equipmentCode": "EQP-PUMP-001",
+    "equipmentName": "卧式离心泵",
+    "category": "水泵设备",
+    "specification": "Q=500m³/h, H=45m, 75kW",
+    "unit": "台",
+    "supplierId": "sup_001",
+    "supplierName": "上海某泵业有限公司",
+    "originalPrice": 12500,
+    "currency": "USD",
+    "usdPrice": 12500,
+    "priceCondition": "CIF Matadi",
+    "confidenceLevel": "A",
+    "reviewStatus": "confirmed",
+    "quoteDate": "2026-05-20",
+    "riskLevel": "low"
+  },
+  {
+    "id": "eqp_002",
+    "equipmentCode": "EQP-VALVE-001",
+    "equipmentName": "电动蝶阀",
+    "category": "阀门设备",
+    "specification": "DN600 PN10",
+    "unit": "台",
+    "supplierId": "sup_002",
+    "supplierName": "天津伯特阀门有限公司",
+    "originalPrice": 4800,
+    "currency": "USD",
+    "usdPrice": 4800,
+    "priceCondition": "FOB Tianjin",
+    "confidenceLevel": "B",
+    "reviewStatus": "pending",
+    "quoteDate": "2026-05-16",
+    "riskLevel": "medium"
+  }
+]

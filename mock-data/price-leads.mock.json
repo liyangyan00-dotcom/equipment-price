@@ -1,0 +1,26 @@
+[
+  {
+    "id": "lead_001",
+    "leadCode": "LEAD-2026-001",
+    "leadType": "equipment",
+    "itemName": "潜水排污泵",
+    "specification": "Q=200m³/h,H=20m",
+    "price": 6200,
+    "currency": "USD",
+    "region": "China",
+    "aiMatchScore": 0.86,
+    "status": "pending"
+  },
+  {
+    "id": "lead_002",
+    "leadCode": "LEAD-2026-002",
+    "leadType": "material",
+    "itemName": "柴油",
+    "specification": "0#",
+    "price": 1.28,
+    "currency": "USD",
+    "region": "Kinshasa",
+    "aiMatchScore": 0.91,
+    "status": "pending"
+  }
+]

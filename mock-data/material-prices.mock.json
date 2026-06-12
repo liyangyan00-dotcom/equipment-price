@@ -1,0 +1,36 @@
+[
+  {
+    "id": "mat_001",
+    "materialCode": "MAT-CEM-001",
+    "materialName": "普通硅酸盐水泥",
+    "category": "水泥",
+    "specification": "42.5R",
+    "unit": "吨",
+    "region": "Kinshasa",
+    "originalPrice": 420,
+    "currency": "USD",
+    "usdPrice": 420,
+    "transportIncluded": true,
+    "confidenceLevel": "B",
+    "reviewStatus": "confirmed",
+    "quoteDate": "2026-06-02",
+    "volatilityLevel": "medium"
+  },
+  {
+    "id": "mat_002",
+    "materialCode": "MAT-STL-001",
+    "materialName": "螺纹钢",
+    "category": "钢筋",
+    "specification": "HRB400 Φ20mm",
+    "unit": "吨",
+    "region": "Kinshasa",
+    "originalPrice": 695,
+    "currency": "USD",
+    "usdPrice": 695,
+    "transportIncluded": false,
+    "confidenceLevel": "B",
+    "reviewStatus": "pending",
+    "quoteDate": "2026-06-05",
+    "volatilityLevel": "high"
+  }
+]

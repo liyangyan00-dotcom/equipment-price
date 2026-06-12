@@ -1,0 +1,25 @@
+[
+  {
+    "id": "ai_001",
+    "taskCode": "AI-20260610-001",
+    "taskType": "quote_recognition",
+    "confidence": 0.92,
+    "riskLevel": "medium",
+    "missingFields": [
+      "taxIncluded"
+    ],
+    "status": "needs_review"
+  },
+  {
+    "id": "ai_002",
+    "taskCode": "AI-20260610-002",
+    "taskType": "price_collection",
+    "confidence": 0.78,
+    "riskLevel": "high",
+    "missingFields": [
+      "quoteDate",
+      "priceCondition"
+    ],
+    "status": "needs_info"
+  }
+]

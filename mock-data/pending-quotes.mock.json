@@ -1,0 +1,13 @@
+[
+  {
+    "id": "pq_001",
+    "fileName": "某泵业公司报价单.pdf",
+    "quoteType": "equipment",
+    "supplierName": "上海某泵业有限公司",
+    "quoteDate": "2026-05-20",
+    "currency": "USD",
+    "aiConfidence": 0.92,
+    "reviewStatus": "pending",
+    "riskLevel": "medium"
+  }
+]

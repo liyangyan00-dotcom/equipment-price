@@ -1,0 +1,28 @@
+{
+  "currencyRates": [
+    {
+      "currency": "USD",
+      "rateToUsd": 1,
+      "updatedAt": "2026-06-10",
+      "isDefault": true
+    },
+    {
+      "currency": "CNY",
+      "rateToUsd": 0.139,
+      "updatedAt": "2026-06-10",
+      "isDefault": false
+    },
+    {
+      "currency": "EUR",
+      "rateToUsd": 1.08,
+      "updatedAt": "2026-06-10",
+      "isDefault": false
+    },
+    {
+      "currency": "CDF",
+      "rateToUsd": 0.00036,
+      "updatedAt": "2026-06-10",
+      "isDefault": false
+    }
+  ]
+}

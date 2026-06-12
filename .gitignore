@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+
+# next
+.next/
+out/
+
+# production
+build/
+dist/
+
+# env
+.env*
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dev-server-*.log
+
+# local verification screenshots
+/dashboard-*.png
+/round-*.png
+/round5b-*.png
+/selfcheck-*.png
+
+# typescript
+*.tsbuildinfo
+
+# system
+.DS_Store
+Thumbs.db

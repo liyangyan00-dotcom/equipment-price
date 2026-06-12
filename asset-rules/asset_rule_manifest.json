@@ -1,0 +1,51 @@
+{
+  "version": "V3.4",
+  "focus": "UI 100% restore and asset generation rules",
+  "new_directories": [
+    "ui-restore",
+    "asset-rules",
+    "visual-references/component-redline",
+    "codex-tasks/pixel-restore",
+    "assets/svg-icons",
+    "assets/illustrations",
+    "assets/backgrounds"
+  ],
+  "key_rules": {
+    "image2_allowed": [
+      "login background",
+      "sidebar water plant thumbnail",
+      "empty-state illustrations",
+      "AI assistant illustrations",
+      "report cover background",
+      "water plant concept images"
+    ],
+    "image2_forbidden": [
+      "page layout",
+      "tables",
+      "charts",
+      "buttons",
+      "forms",
+      "modals",
+      "text",
+      "numbers",
+      "status badges",
+      "business data"
+    ],
+    "svg_recommended": [
+      "logo",
+      "navigation icons",
+      "action icons",
+      "status icons",
+      "simple module icons"
+    ],
+    "code_required": [
+      "all 28 main UI screens",
+      "business tables",
+      "charts",
+      "forms",
+      "filters",
+      "dialogs",
+      "interactive components"
+    ]
+  }
+}

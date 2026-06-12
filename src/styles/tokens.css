@@ -1,0 +1,133 @@
+:root {
+  --layout-sidebar-width: 256px;
+  --layout-topbar-height: 64px;
+  --spacing-page-padding: 24px;
+  --spacing-page-gap: 20px;
+  --spacing-section-gap: 16px;
+  --spacing-card-gap: 16px;
+  --spacing-toolbar-gap: 12px;
+  --size-table-row-height: 52px;
+  --size-filter-height: 40px;
+  --size-button-height: 40px;
+  --size-button-height-sm: 36px;
+  --size-sidebar-item-height: 44px;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-card: 16px;
+  --radius-card-lg: 20px;
+  --radius-pill: 999px;
+
+  --color-bg-page: #f3f7fb;
+  --color-bg-page-soft: #f6f9fc;
+  --color-bg-card: #ffffff;
+  --color-bg-muted: #f8fafc;
+  --color-border: #d8e3f0;
+  --color-border-soft: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-primary: #0b5cad;
+  --color-primary-hover: #084a94;
+  --color-primary-soft: #e8f2ff;
+  --color-primary-deep: #061b3a;
+  --color-primary-navy: #0b2454;
+  --color-cyan: #00a6b8;
+  --color-cyan-soft: #e6fafc;
+  --color-gold: #d6a84f;
+
+  --color-ai-purple: #7c3aed;
+  --color-ai-purple-2: #8b5cf6;
+  --color-ai-soft: #ede9fe;
+  --color-ai-border: #ddd6fe;
+  --color-ai-glow: rgba(124, 58, 237, 0.16);
+
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fee2e2;
+  --color-muted: #64748b;
+  --color-muted-soft: #f1f5f9;
+
+  --color-text-main: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-placeholder: #94a3b8;
+  --color-text-inverse: #ffffff;
+
+  --sidebar-bg-from: #061b3a;
+  --sidebar-bg-to: #0b2454;
+  --sidebar-item-text: #c7d2fe;
+  --sidebar-item-muted: #93a4c7;
+  --sidebar-item-active-bg: rgba(11, 92, 173, 0.95);
+  --sidebar-item-hover-bg: rgba(255, 255, 255, 0.08);
+
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 12px 36px rgba(15, 23, 42, 0.1);
+  --shadow-panel: 0 16px 48px rgba(15, 23, 42, 0.12);
+  --shadow-ai: 0 12px 40px rgba(124, 58, 237, 0.16);
+  --shadow-sidebar: 8px 0 28px rgba(6, 27, 58, 0.18);
+  --shadow-topbar: 0 8px 24px rgba(15, 23, 42, 0.05);
+
+  --font-sans: Inter, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --text-page-title: 600 24px / 32px var(--font-sans);
+  --text-page-subtitle: 400 14px / 22px var(--font-sans);
+  --text-section-title: 600 18px / 26px var(--font-sans);
+  --text-card-title: 600 15px / 22px var(--font-sans);
+  --text-body: 400 14px / 22px var(--font-sans);
+  --text-body-medium: 500 14px / 22px var(--font-sans);
+  --text-table: 400 13px / 20px var(--font-sans);
+  --text-table-header: 600 12px / 18px var(--font-sans);
+  --text-caption: 400 12px / 18px var(--font-sans);
+  --text-metric-lg: 700 28px / 36px var(--font-sans);
+  --text-metric-md: 700 22px / 30px var(--font-sans);
+  --text-metric-sm: 700 18px / 26px var(--font-sans);
+
+  --chart-blue: #0b5cad;
+  --chart-cyan: #00a6b8;
+  --chart-purple: #7c3aed;
+  --chart-green: #16a34a;
+  --chart-orange: #f59e0b;
+  --chart-red: #dc2626;
+  --chart-slate: #64748b;
+
+  --app-sidebar-width: var(--layout-sidebar-width);
+  --app-topbar-height: var(--layout-topbar-height);
+  --app-page-padding: var(--spacing-page-padding);
+  --app-card-radius: var(--radius-card);
+  --app-card-gap: var(--spacing-card-gap);
+  --app-table-row-height: var(--size-table-row-height);
+  --app-filter-height: var(--size-filter-height);
+  --app-button-height: var(--size-button-height);
+  --app-nav-bg: var(--sidebar-bg-from);
+  --app-nav-bg-strong: var(--sidebar-bg-to);
+  --app-nav-bg-soft: #102c5b;
+  --app-page-bg: var(--color-bg-page);
+  --app-card-bg: var(--color-bg-card);
+  --app-border: var(--color-border);
+  --app-border-strong: var(--color-border-strong);
+  --app-primary: var(--color-primary);
+  --app-primary-light: #1677ff;
+  --app-cyan: var(--color-cyan);
+  --app-success: var(--color-success);
+  --app-warning: var(--color-warning);
+  --app-danger: var(--color-danger);
+  --app-ai-purple: var(--color-ai-purple);
+  --app-risk-orange: #f97316;
+  --app-text-primary: var(--color-text-main);
+  --app-text-secondary: var(--color-text-muted);
+  --app-text-inverse: var(--color-text-inverse);
+  --app-shadow-card: var(--shadow-card);
+  --app-shadow-topbar: var(--shadow-topbar);
+  --app-shadow-sidebar: var(--shadow-sidebar);
+  --app-font-sans: var(--font-sans);
+  --app-page-title: var(--text-page-title);
+  --app-section-title: var(--text-section-title);
+  --app-card-title: var(--text-card-title);
+  --app-metric-value: var(--text-metric-lg);
+  --app-table-header: var(--text-table-header);
+  --app-table-cell: var(--text-table);
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "sup_001",
+    "supplierCode": "SUP-CN-001",
+    "supplierName": "上海某泵业有限公司",
+    "country": "中国",
+    "supplierType": "manufacturer",
+    "mainProducts": [
+      "水泵",
+      "电机",
+      "控制柜"
+    ],
+    "rating": 4.5,
+    "deliveryRisk": "low",
+    "reviewStatus": "active"
+  },
+  {
+    "id": "sup_002",
+    "supplierCode": "SUP-CN-002",
+    "supplierName": "天津伯特阀门有限公司",
+    "country": "中国",
+    "supplierType": "manufacturer",
+    "mainProducts": [
+      "阀门",
+      "电动执行器"
+    ],
+    "rating": 4.3,
+    "deliveryRisk": "medium",
+    "reviewStatus": "active"
+  },
+  {
+    "id": "sup_003",
+    "supplierCode": "SUP-DRC-001",
+    "supplierName": "Kinshasa Cement SA",
+    "country": "刚果金",
+    "supplierType": "local_supplier",
+    "mainProducts": [
+      "水泥",
+      "砂石",
+      "运输"
+    ],
+    "rating": 4.0,
+    "deliveryRisk": "medium",
+    "reviewStatus": "active"
+  }
+]

@@ -1,0 +1,176 @@
+{
+  "version": "V3.3",
+  "description": "AI增强版水厂价格信息库：28页UI参考图已归档",
+  "primary_images": [
+    {
+      "index": 1,
+      "title": "首页 / AI增强价格雷达",
+      "file": "01_dashboard_ai_price_intelligence.png",
+      "source": "ai增强价格情报仪表盘界面.png"
+    },
+    {
+      "index": 2,
+      "title": "机电设备价格库",
+      "file": "02_equipment_price_library_ai.png",
+      "source": "ai驱动的设备价格查询平台.png"
+    },
+    {
+      "index": 3,
+      "title": "设备价格详情",
+      "file": "03_equipment_price_detail_ai.png",
+      "source": "水厂项目设备价格详情.png"
+    },
+    {
+      "index": 4,
+      "title": "设备价格AI推荐分析 / 设备价格辅助页",
+      "file": "04_equipment_price_ai_recommendation.png",
+      "source": "水厂设备价格与ai推荐分析.png"
+    },
+    {
+      "index": 5,
+      "title": "刚果金地材价格库",
+      "file": "05_material_price_library_ai.png",
+      "source": "ai增强材料价格管理仪表盘.png"
+    },
+    {
+      "index": 6,
+      "title": "新增/编辑地材价格 / 地材管理辅助页",
+      "file": "06_material_price_management.png",
+      "source": "水厂项目地材价格管理平台.png"
+    },
+    {
+      "index": 7,
+      "title": "供应商库",
+      "file": "07_supplier_library_ai.png",
+      "source": "水厂项目供应商智能管理系统.png"
+    },
+    {
+      "index": 8,
+      "title": "供应商详情与AI评估",
+      "file": "08_supplier_detail_ai_assessment.png",
+      "source": "供应商详情与ai评估仪表盘.png"
+    },
+    {
+      "index": 9,
+      "title": "新增/编辑供应商 / 供应商管理辅助页",
+      "file": "09_supplier_management_detail.png",
+      "source": "水厂设备供应商管理界面.png"
+    },
+    {
+      "index": 10,
+      "title": "AI报价识别中心",
+      "file": "10_ai_quote_recognition_center.png",
+      "source": "ai报价识别中心界面截图.png"
+    },
+    {
+      "index": 11,
+      "title": "待审核报价池",
+      "file": "11_pending_quote_pool.png",
+      "source": "水厂项目待审核报价池界面.png"
+    },
+    {
+      "index": 12,
+      "title": "AI价格采集中心",
+      "file": "12_ai_price_collection_center.png",
+      "source": "ai价格采集中心仪表盘.png"
+    },
+    {
+      "index": 13,
+      "title": "价格线索池",
+      "file": "13_price_lead_pool.png",
+      "source": "水厂项目价格线索管理仪表盘.png"
+    },
+    {
+      "index": 14,
+      "title": "询价与比价管理",
+      "file": "14_inquiry_comparison_management_ai.png",
+      "source": "ai增强询价与比价管理仪表盘.png"
+    },
+    {
+      "index": 15,
+      "title": "创建询价任务 / 采购询价管理",
+      "file": "15_procurement_inquiry_management.png",
+      "source": "水厂项目采购管理仪表盘.png"
+    },
+    {
+      "index": 16,
+      "title": "AI询价函生成",
+      "file": "16_ai_inquiry_letter_generation.png",
+      "source": "ai询价与设备清单管理界面.png"
+    },
+    {
+      "index": 17,
+      "title": "比价表详情",
+      "file": "17_comparison_detail_ai_analysis.png",
+      "source": "水厂项目设备比价详情.png"
+    },
+    {
+      "index": 18,
+      "title": "项目套价中心",
+      "file": "18_project_pricing_center_ai.png",
+      "source": "ai增强项目套价中心仪表盘.png"
+    },
+    {
+      "index": 19,
+      "title": "BOQ上传与AI解析结果",
+      "file": "19_boq_upload_ai_parse.png",
+      "source": "boq上传与ai解析界面.png"
+    },
+    {
+      "index": 20,
+      "title": "价格依据与附件库",
+      "file": "20_attachment_evidence_ai_archive.png",
+      "source": "ai智能归档证据管理界面.png"
+    },
+    {
+      "index": 21,
+      "title": "统计分析",
+      "file": "21_analytics_dashboard.png",
+      "source": "水厂项目统计分析仪表板.png"
+    },
+    {
+      "index": 22,
+      "title": "AI工作台 / AI任务中心",
+      "file": "22_ai_workbench_task_center.png",
+      "source": "ai任务中心仪表盘界面.png"
+    },
+    {
+      "index": 23,
+      "title": "AI报告生成中心",
+      "file": "23_ai_report_generation_center.png",
+      "source": "ai报告生成中心仪表盘界面.png"
+    },
+    {
+      "index": 24,
+      "title": "报告预览与导出",
+      "file": "24_report_preview_export.png",
+      "source": "水厂项目报告管理界面.png"
+    },
+    {
+      "index": 25,
+      "title": "AI系统设置",
+      "file": "25_system_settings_ai.png",
+      "source": "ai系统设置管理面板.png"
+    },
+    {
+      "index": 26,
+      "title": "用户与权限 / 通用系统设置",
+      "file": "26_system_settings_general.png",
+      "source": "水厂项目系统设置界面.png"
+    },
+    {
+      "index": 27,
+      "title": "登录页",
+      "file": "27_login_page.png",
+      "source": "水厂项目登录界面设计.png"
+    },
+    {
+      "index": 28,
+      "title": "空状态与弹窗组件 / UI组件参考",
+      "file": "28_modal_empty_states_components.png",
+      "source": "a_wide_flat_graphic_design_mockup_poster_ui_show.png"
+    }
+  ],
+  "missing": [],
+  "raw_pool_count": 39
+}
