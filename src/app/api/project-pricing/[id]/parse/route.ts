@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getApiAccess } from "@/lib/auth/apiAccess";
+import { isProjectBoqObjectPath } from "@/lib/projectPricing/boqStorage";
 import { parseBoqWorkbook } from "@/lib/imports/parseBoqWorkbook";
 import { loadProjectPricing, projectPricingWriteRoles } from "@/lib/projectPricing/server";
 
@@ -10,7 +11,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const { id } = await context.params;
   const body = await request.json() as { bucket?: string; path?: string; fileName?: string; contentType?: string; fileSize?: number };
   if (body.bucket !== "business-documents" || !body.path || !body.fileName) return NextResponse.json({ error: "BOQ 文件信息不完整" }, { status: 400 });
-  if (!body.path.startsWith(`${access.organizationId}/project-pricing/${id}/`)) return NextResponse.json({ error: "文件路径不属于当前项目" }, { status: 403 });
+  if (!isProjectBoqObjectPath(body.path, access.organizationId, id)) return NextResponse.json({ error: "文件路径不属于当前项目" }, { status: 403 });
 
   const downloaded = await access.supabase.storage.from(body.bucket).download(body.path);
   if (downloaded.error) return NextResponse.json({ error: downloaded.error.message }, { status: 400 });
@@ -30,7 +31,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     size_bytes: body.fileSize || 0,
     related_type: "project_pricing",
     related_id: id,
-    evidence_type: "boq_source",
+    evidence_type: "other",
+    metadata: { documentPurpose: "boq_source" },
     uploaded_by: access.userId,
   }).select().single();
   if (attachment.error) return NextResponse.json({ error: attachment.error.message }, { status: 400 });

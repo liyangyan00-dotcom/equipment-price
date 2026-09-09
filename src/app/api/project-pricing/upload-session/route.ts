@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     if (owned.error || !owned.data) return NextResponse.json({ error: "项目套价方案不存在" }, { status: 404 });
   }
 
-  const path = buildBusinessObjectPath(access.organizationId, `project-pricing/${projectId}`, fileName);
+  const path = buildBusinessObjectPath(access.organizationId, `project-pricing/${projectId}`, `boq.${extension}`);
   return NextResponse.json({
     data: { projectId },
     upload: { bucket, path, contentType: body.contentType || (extension === "csv" ? "text/csv" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") },

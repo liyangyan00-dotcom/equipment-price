@@ -54,7 +54,7 @@ export function ProjectPricingWorkflow({ state }: { state: WorkflowState }) {
     { title: "创建项目", description: "明确套价条件", icon: BriefcaseBusiness, status: workflow.project },
     { title: "上传 BOQ", description: "归档源文件", icon: FileUp, status: workflow.upload },
     { title: "解析核对", description: `${state.totalItems} 项已解析`, icon: FileSearch, status: workflow.parse },
-    { title: "AI 匹配", description: state.matchingCompleted ? `${state.matchedItems} 项推荐 · ${state.gapItems} 项缺口` : "等待执行匹配", icon: Sparkles, status: workflow.matching },
+    { title: "AI 匹配", description: state.matchingCompleted ? `${state.matchedItems} 项已有价格 · 曾有 ${state.gapItems} 项询价缺口` : "等待执行匹配", icon: Sparkles, status: workflow.matching },
     { title: "人工确认", description: `${Math.min(state.confirmedItems, state.matchedItems)} / ${state.matchedItems} 项`, icon: ClipboardCheck, status: workflow.review },
     { title: "缺口询价", description: `${Math.min(state.inquiryLinkedItems, state.gapItems)} / ${state.gapItems} 项`, icon: MessageSquareQuote, status: workflow.inquiry },
     { title: "报价回填", description: `${Math.min(state.inquiryQuoteItems, state.gapItems)} / ${state.gapItems} 项`, icon: BadgeCheck, status: workflow.backfill },

@@ -2525,10 +2525,10 @@ function ProjectPricingPageContent() {
                           <div className="grid grid-cols-2 gap-2">
                             <div className="rounded-lg bg-white p-2">
                               <p className="text-[10px] text-textMuted">
-                                AI可信度
+                                {selected.decision_status === "confirmed" ? "人工确认状态" : "建议可信度"}
                               </p>
                               <p className="mt-1 text-[18px] font-bold text-ai">
-                                {selected.confidence}%
+                                {selected.decision_status === "confirmed" ? "已确认" : `${selected.confidence}%`}
                               </p>
                             </div>
                             <div className="rounded-lg bg-white p-2">
@@ -2541,7 +2541,9 @@ function ProjectPricingPageContent() {
                             </div>
                           </div>
                           <div className="rounded-lg border border-ai-border bg-white/70 p-3 text-[12px] leading-5 text-textSecondary">
-                            {selected.match_level === "unmatched"
+                            {selected.decision_status === "confirmed"
+                              ? "本项价格已由人工确认，确认原因和价格口径已写入决策记录。"
+                              : selected.match_level === "unmatched"
                               ? "未找到满足阈值的价格来源，必须发起询价或人工选价。"
                               : `已从 ${selected.source_legacy_id || selected.price_source_type} 形成 AI 推荐。该结果尚未经过最终商务确认。`}
                           </div>
