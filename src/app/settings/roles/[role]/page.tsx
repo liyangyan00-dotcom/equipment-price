@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SettingsAccessState, SettingsRequestError } from "@/components/settings/SettingsAccessState";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -80,14 +81,15 @@ export default function RoleDetailPage() {
   const [users, setUsers] = useState<OrganizationUser[]>([]);
   const [loading, setLoading] = useState(Boolean(role));
   const [error, setError] = useState("");
+  const [denied, setDenied] = useState(false);
 
   useEffect(() => {
     if (!role) return;
     let cancelled = false;
     Promise.all([
-      fetch("/api/settings/roles", { cache: "no-store" }).then(async (response) => { const payload = await response.json(); if (!response.ok) throw new Error(payload.error || "角色读取失败"); return payload as RolesResponse; }),
-      fetch("/api/settings/users", { cache: "no-store" }).then(async (response) => { const payload = await response.json(); if (!response.ok) throw new Error(payload.error || "成员读取失败"); return payload.data as OrganizationUser[]; }),
-    ]).then(([roleResponse, memberResponse]) => { if (!cancelled) { setRolesData(roleResponse); setUsers(memberResponse); setError(""); } }).catch((requestError) => { if (!cancelled) setError(requestError instanceof Error ? requestError.message : String(requestError)); }).finally(() => { if (!cancelled) setLoading(false); });
+      fetch("/api/settings/roles", { cache: "no-store" }).then(async (response) => { const payload = await response.json(); if (!response.ok) throw new SettingsRequestError(payload.error || "角色读取失败", response.status); return payload as RolesResponse; }),
+      fetch("/api/settings/users", { cache: "no-store" }).then(async (response) => { const payload = await response.json(); if (!response.ok) throw new SettingsRequestError(payload.error || "成员读取失败", response.status); return payload.data as OrganizationUser[]; }),
+    ]).then(([roleResponse, memberResponse]) => { if (!cancelled) { setRolesData(roleResponse); setUsers(memberResponse); setError(""); } }).catch((requestError) => { if (!cancelled) { setError(requestError instanceof Error ? requestError.message : String(requestError)); setDenied(requestError instanceof SettingsRequestError && requestError.status === 403); } }).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [role]);
 
@@ -99,6 +101,7 @@ export default function RoleDetailPage() {
   if (!role) {
     return <AppLayout><EmptyState title="角色不存在" description="该角色不属于当前系统固定角色层级。" primaryAction={<Link href="/settings/roles" className="rounded-md bg-primary px-4 py-2 text-[12px] font-semibold text-white">返回角色权限</Link>} /></AppLayout>;
   }
+  if (loading || error) return <AppLayout><SettingsAccessState title="角色详情" loading={loading} denied={denied} error={error} onRetry={() => window.location.reload()} /></AppLayout>;
   const meta = roleMeta[role];
   const RoleIcon = meta.icon;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SettingsAccessState, SettingsRequestError } from "@/components/settings/SettingsAccessState";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
@@ -99,7 +100,7 @@ async function apiRequest<T>(url: string, init?: RequestInit) {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
   const payload = (await response.json().catch(() => ({}))) as T & { error?: string };
-  if (!response.ok) throw new Error(payload.error || `请求失败（${response.status}）`);
+  if (!response.ok) throw new SettingsRequestError(payload.error || `请求失败（${response.status}）`, response.status);
   return payload;
 }
 
@@ -311,6 +312,7 @@ export default function UsersPage() {
   const [response, setResponse] = useState<UsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [denied, setDenied] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "all">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "invited" | "inactive">("all");
@@ -327,11 +329,14 @@ export default function UsersPage() {
   const loadUsers = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true);
     setError("");
+    setDenied(false);
     try {
       const data = await apiRequest<UsersResponse>("/api/settings/users", { cache: "no-store" });
       setResponse(data);
     } catch (requestError) {
       setError(errorMessage(requestError));
+      setResponse(null);
+      setDenied(requestError instanceof SettingsRequestError && requestError.status === 403);
     } finally {
       setLoading(false);
     }
@@ -344,7 +349,11 @@ export default function UsersPage() {
         if (!cancelled) setResponse(data);
       })
       .catch((requestError) => {
-        if (!cancelled) setError(errorMessage(requestError));
+        if (!cancelled) {
+          setError(errorMessage(requestError));
+          setResponse(null);
+          setDenied(requestError instanceof SettingsRequestError && requestError.status === 403);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -434,6 +443,8 @@ export default function UsersPage() {
   };
 
   const resetFilters = () => { setKeyword(""); setRoleFilter("all"); setStatusFilter("all"); };
+
+  if (loading || error || !response) return <AppLayout><SettingsAccessState title="用户管理" loading={loading} denied={denied} error={error} onRetry={() => void loadUsers()} /></AppLayout>;
 
   return (
     <AppLayout>

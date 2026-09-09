@@ -32,6 +32,7 @@ export function SettingsHome({ organization, role, error, checkedAt, recovery }:
   organization: { name: string; code: string } | null; role: string;
   error: string; checkedAt: string; recovery?: ReactNode;
 }) {
+  const visibleGroups = settingsGroups.map((group, index) => ({ group, index })).filter(({ index }) => index !== 0 || role === "admin");
   return (
     <div className="w-full min-w-0 space-y-4 antialiased" data-no-global-interaction>
       <header className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-primary/15 bg-gradient-to-r from-primary-soft via-white to-cyan-soft/50 px-5 py-4">
@@ -59,13 +60,13 @@ export function SettingsHome({ organization, role, error, checkedAt, recovery }:
         <nav aria-label="设置导航" className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-card border border-primary/15 bg-white px-4 py-3">
           <ModuleHeader icon={Settings2} title="设置导航" density="compact" className="px-1" />
           <ul className="flex flex-wrap gap-2">
-            {settingsGroups.map((group, index) => <li key={group.title}><a href={`#settings-${groupIds[index]}`} className={`flex min-h-10 items-center gap-2 rounded-lg border px-4 text-[14px] font-medium transition-colors hover:brightness-95 focus-visible:outline-2 focus-visible:outline-primary ${groupSurfaces[group.tone]}`}><group.icon className={`size-[18px] shrink-0 ${groupColors[group.tone]}`} />{group.title}</a></li>)}
+            {visibleGroups.map(({ group, index }) => <li key={group.title}><a href={`#settings-${groupIds[index]}`} className={`flex min-h-10 items-center gap-2 rounded-lg border px-4 text-[14px] font-medium transition-colors hover:brightness-95 focus-visible:outline-2 focus-visible:outline-primary ${groupSurfaces[group.tone]}`}><group.icon className={`size-[18px] shrink-0 ${groupColors[group.tone]}`} />{group.title}</a></li>)}
           </ul>
         </nav>
         <div className="min-w-0 space-y-4">
           <nav aria-label="设置分类" className="grid gap-4 min-[1800px]:grid-cols-2">
-            {settingsGroups.map((group, index) => (
-              <section id={`settings-${groupIds[index]}`} key={group.title} className={`min-w-0 scroll-mt-24 rounded-card border bg-white px-5 py-4 shadow-[0_3px_16px_rgba(15,42,76,0.04)] transition-shadow hover:shadow-[0_6px_24px_rgba(15,42,76,0.07)] motion-reduce:transition-none sm:px-6 target:ring-2 target:ring-primary/25 ${groupBorders[group.tone]} ${index === settingsGroups.length - 1 ? "min-[1800px]:col-span-2" : ""}`}>
+            {visibleGroups.map(({ group, index }) => (
+              <section id={`settings-${groupIds[index]}`} key={group.title} className={`min-w-0 scroll-mt-24 rounded-card border bg-white px-5 py-4 shadow-[0_3px_16px_rgba(15,42,76,0.04)] transition-shadow hover:shadow-[0_6px_24px_rgba(15,42,76,0.07)] motion-reduce:transition-none sm:px-6 target:ring-2 target:ring-primary/25 ${groupBorders[group.tone]} ${visibleGroups.length % 2 === 1 && index === settingsGroups.length - 1 ? "min-[1800px]:col-span-2" : ""}`}>
                 <div className={`-mx-5 -mt-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[inherit] border-b px-5 py-3 sm:-mx-6 sm:px-6 ${groupSurfaces[group.tone]}`}>
                   <div className="flex min-w-0 items-center gap-3.5">
                     <IconBox icon={group.icon} tone={group.tone} size="lg" className="shadow-none" />

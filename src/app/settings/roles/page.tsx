@@ -2,6 +2,7 @@
 import { useUnsavedSettings } from "@/hooks/useUnsavedSettings";
 
 import Link from "next/link";
+import { SettingsAccessState, SettingsRequestError } from "@/components/settings/SettingsAccessState";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
@@ -126,7 +127,7 @@ async function apiRequest<T>(init?: RequestInit) {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
   const payload = (await response.json().catch(() => ({}))) as T & { error?: string };
-  if (!response.ok) throw new Error(payload.error || `请求失败（${response.status}）`);
+  if (!response.ok) throw new SettingsRequestError(payload.error || `请求失败（${response.status}）`, response.status);
   return payload;
 }
 
@@ -167,6 +168,7 @@ export default function SettingsRolesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [denied, setDenied] = useState(false);
   const [selectedRole, setSelectedRole] = useState<AppRole>("manager");
   const [draft, setDraft] = useState<AppPermission[]>([]);
   const [search, setSearch] = useState("");
@@ -177,6 +179,7 @@ export default function SettingsRolesPage() {
   const loadRoles = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true);
     setError("");
+    setDenied(false);
     try {
       const data = await apiRequest<RolesResponse>();
       setResponse(data);
@@ -187,6 +190,8 @@ export default function SettingsRolesPage() {
       }
     } catch (requestError) {
       setError(errorMessage(requestError));
+      setResponse(null);
+      setDenied(requestError instanceof SettingsRequestError && requestError.status === 403);
     } finally {
       setLoading(false);
     }
@@ -206,7 +211,11 @@ export default function SettingsRolesPage() {
         }
       })
       .catch((requestError) => {
-        if (!cancelled) setError(errorMessage(requestError));
+        if (!cancelled) {
+          setError(errorMessage(requestError));
+          setResponse(null);
+          setDenied(requestError instanceof SettingsRequestError && requestError.status === 403);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -301,6 +310,8 @@ export default function SettingsRolesPage() {
     setDraft(source.permissions.filter((permission) => !protectedSet.has(permission)));
     toast.info("已复制权限模板", `已将${roleMeta[copyFrom].label}权限复制到当前草稿，保存后才会生效。`);
   };
+
+  if (loading || error || !response) return <AppLayout><SettingsAccessState title="角色权限管理" loading={loading} denied={denied} error={error} onRetry={() => void loadRoles()} /></AppLayout>;
 
   return (
     <AppLayout>
