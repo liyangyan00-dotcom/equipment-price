@@ -1,22 +1,29 @@
 {
-  "migrations": [
+  "migrations": [],
+  "appliedMigrations": [
     {
       "file": "20260906114755_guard_terminal_ai_review_authorization.sql",
       "hash": "549e5888b772ff621e9af77e72ee64f7",
-      "status": "pending",
-      "reason": "Authorize terminal AI review returns before disclosing run payloads. Local PostgreSQL regression verified; not applied to cloud."
+      "status": "applied",
+      "reason": "Applied with user authorization on 2026-09-09; live schema and privilege checks passed. Original reviewed SQL retained; cloud execution included bounded lock/statement timeouts.",
+      "remoteVersion": "20260909144213",
+      "projectId": "tkyvafheqyshbjqnzbgq"
     },
     {
       "file": "20260906132338_guard_material_price_review_permissions.sql",
       "hash": "e60c367eb55decf893ffbf7534491b9c",
-      "status": "pending",
-      "reason": "Guard material price review authorization, actor stamps and state transitions; restrict review-only edits and preserve human source import RPCs. PostgreSQL regression verified locally; not applied to cloud."
+      "status": "applied",
+      "reason": "Applied with user authorization on 2026-09-09; live schema and privilege checks passed. Original reviewed SQL retained; cloud execution included bounded lock/statement timeouts.",
+      "remoteVersion": "20260909144223",
+      "projectId": "tkyvafheqyshbjqnzbgq"
     },
     {
       "file": "20260909101242_guard_attachment_review_authorization.sql",
       "hash": "fd3a128352ee8e20f063fbb5a99e3f1f",
-      "status": "pending",
-      "reason": "Attachment API/RPC reviewer isolation, direct-write review/identity protection, atomic assignment and evidence revision invalidation. Local PostgreSQL behavior regression; NOT applied to cloud."
+      "status": "applied",
+      "reason": "Applied with user authorization on 2026-09-09; live schema and privilege checks passed. Original reviewed SQL retained; cloud execution included bounded lock/statement timeouts.",
+      "remoteVersion": "20260909144238",
+      "projectId": "tkyvafheqyshbjqnzbgq"
     }
   ]
 }
