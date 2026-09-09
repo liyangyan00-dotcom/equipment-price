@@ -55,3 +55,16 @@ supabase/pending-migrations.json 记录原始 SQL 哈希及云端版本映射，
 ## 后续发布
 
 必须明确指定新项目 ID；不要复用其他项目的 .vercel 目录、域名或部署命令。当前生产源码基线为上列应用提交，发布记录及迁移账本的后续提交不改变已部署应用代码。首次发布没有可回退的旧应用版本；如需撤回，仅处置 shuiwu-zhicai 项目，不回滚共享数据库、不操作其他项目。
+
+## 管理页面权限提示修复（2026-09-09）
+
+- 应用提交：`0f262c1`；部署：`dpl_4m7pktpKPhpSp25zj1CvNxiB7Eo4`。
+- 正式地址仍为 https://shuiwu-zhicai.vercel.app ，独立项目 ID 不变。
+- 用户管理、角色权限及角色详情将 API 403 呈现为“当前账号无管理权限”，不再显示失败统计、邀请或权限配置操作；加载和服务异常也不会显示零值统计。
+- 系统设置的组织与成员分类仅对 admin 显示；后端管理员权限检查保持不变。本次没有数据库或账号权限变更。
+- 验证：TypeScript、定向 ESLint、7 项 settings-safety 测试、6 项角色入口测试通过；浏览器覆盖真实 editor 登录、三个管理页面拒绝访问、API 403、入口隐藏，以及本地模拟 503 重试、admin 成功数据呈现和刷新后权限撤销。管理员展示验证使用模拟响应，没有授予临时账号管理员权限或修改真实业务数据。
+- 正式构建 READY，部署唯一地址登录页 HTTP 200 后提升生产；正式地址通过真实 editor 登录回归。
+- 手机端设置内容区无横向溢出；全站现有顶部栏仍存在窄屏横向溢出，本次未调整全站布局。
+- 现场询价、招标及供应商报价门户的项目 ID、updatedAt、生产部署 ID 发布前后相同，三个公开入口均 HTTP 200。
+- 可回退的上一水务智采部署：`dpl_AYvusnQ2Kfd6A8GxHwms4t6SDTVz`。回退仅限该独立项目。
+- 回归脚本：`node --test scripts/settings-access.test.cjs`；浏览器脚本 `node scripts/settings-access-browser.cjs` 从 SETTINGS_TEST_EMAIL / SETTINGS_TEST_PASSWORD 读取临时环境变量，不保存密码或会话。正式只读验证另设 SETTINGS_TEST_URL 和 SETTINGS_TEST_PRODUCTION=1。
