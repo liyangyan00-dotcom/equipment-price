@@ -1,5 +1,5 @@
 export const generalSettings = {
-  systemName: "水厂价格情报系统",
+  systemName: "水务智采 · AI 价格情报与成本决策平台",
   organization: "商务预算组",
   dataScope: "设备价格、地材价格、供应商、询价比价、项目套价",
   defaultLanguage: "中文",

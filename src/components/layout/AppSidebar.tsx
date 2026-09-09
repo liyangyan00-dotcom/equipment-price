@@ -10,7 +10,7 @@ import {
   navigationItems,
   type NavigationCounts,
 } from "@/config/navigation";
-import logoMark from "../../../assets/svg-icons/logo_water_price_system.svg";
+
 import { cn } from "@/lib/utils";
 import { SidebarNavItem, isNavigationItemActive } from "./SidebarNavItem";
 import type { TopbarAiMode } from "@/types/topbar";
@@ -89,12 +89,12 @@ export function AppSidebar() {
     >
       <div className={cn("flex h-16 items-center", collapsed ? "flex-col justify-center gap-1" : "gap-3 px-1")}>
         <div className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-white shadow-[0_8px_20px_rgba(0,166,184,0.2)]">
-          <Image src={logoMark} alt="水厂价格情报系统" width={29} height={29} priority />
+          <Image src="/brand/shuiwu-zhicai.png" alt="水务智采 · AI 价格情报与成本决策平台" width={40} height={40} className="rounded-[12px]" priority />
         </div>
         {!collapsed ? (
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[15px] font-semibold leading-5 text-white">水厂价格中枢</p>
-            <p className="truncate text-[11px] leading-4 text-cyan-100/70">AI Price Intelligence</p>
+          <div className="min-w-0 flex-1" title="水务智采 · AI 价格情报与成本决策平台">
+            <p className="truncate text-[15px] font-semibold leading-5 text-white">水务智采</p>
+            <p className="text-[11px] font-medium leading-[14px] text-cyan-100/90"><span className="block whitespace-nowrap">AI 价格情报与</span><span className="block whitespace-nowrap">成本决策平台</span></p>
           </div>
         ) : null}
         {!collapsed ? (

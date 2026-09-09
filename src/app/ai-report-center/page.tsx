@@ -2465,7 +2465,7 @@ function AiReportCenterPageContent() {
           </div>
         ) : null}
         <div className="flex justify-between text-[12px] text-textMuted">
-          <span>© 2026 水厂项目机电设备与地材价格信息库 V1.0</span>
+          <span>© 2026 水务智采 · AI 价格情报与成本决策平台 V1.0</span>
           <span>技术支持：WaterProject Tech Team</span>
         </div>
       </div>

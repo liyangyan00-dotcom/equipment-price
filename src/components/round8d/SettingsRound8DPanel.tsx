@@ -52,7 +52,7 @@ type SettingsForm = {
 };
 
 const defaultForm: SettingsForm = {
-  systemName: "水厂价格情报系统",
+  systemName: "水务智采 · AI 价格情报与成本决策平台",
   timezone: "Asia/Shanghai (UTC+8)",
   currency: "USD/CNY 7.18",
   baseCurrency: "USD",

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { ShieldCheck } from "lucide-react";
 import loginBackground from "../../../assets/backgrounds/login_water_plant_ai_bg.png";
-import logoMark from "../../../assets/svg-icons/logo_water_price_system.svg";
+
 import { LoginForm } from "@/components/auth/LoginForm";
 
 const featureCards = [
@@ -30,18 +30,18 @@ export default function LoginPage() {
       <div className="relative z-10 grid min-h-screen grid-cols-1 items-center gap-10 px-6 py-10 lg:grid-cols-[1.15fr_0.85fr] lg:px-20">
         <section className="max-w-4xl">
           <div className="flex items-center gap-4">
-            <div className="flex size-16 items-center justify-center rounded-[20px] bg-white shadow-[0_16px_40px_rgba(0,166,184,0.28)]">
-              <Image src={logoMark} alt="水厂价格信息库 Logo" width={46} height={46} />
+            <div className="flex size-16 shrink-0 items-center justify-center rounded-[20px] bg-white shadow-[0_16px_40px_rgba(0,166,184,0.28)]">
+              <Image src="/brand/shuiwu-zhicai.png" alt="水务智采 · AI 价格情报与成本决策平台 Logo" width={64} height={64} className="rounded-[20px]" />
             </div>
             <div>
-              <p className="text-[22px] font-semibold leading-8">水厂项目机电设备与地材价格信息库</p>
-              <p className="mt-1 text-sm text-cyan-100/80">AI Price Intelligence</p>
+              <p className="text-[22px] font-semibold leading-8">水务智采</p>
+              <p className="mt-1 text-sm text-cyan-100/80">AI 价格情报与成本决策平台</p>
             </div>
           </div>
 
           <div className="mt-12">
             <h1 className="max-w-4xl text-[44px] font-semibold leading-tight tracking-0 lg:text-[56px]">
-              水厂工程价格情报与 AI 套价决策中心
+              让每一次询价与套价，都有可信依据
             </h1>
             <p className="mt-6 max-w-3xl text-[18px] leading-8 text-blue-50/86">
               面向投标组价、供应商询价、成本测算与价格依据管理。AI 负责识别、采集与建议，
