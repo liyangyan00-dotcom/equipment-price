@@ -8,27 +8,47 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:reviewer-rpc": "node --test scripts/reviewer-rpc.test.mjs",
+    "test:material-review-db": "node --test scripts/material-review-db.test.mjs",
+    "test:contracts": "node --conditions=react-server --experimental-strip-types --test scripts/workflow-contracts.test.mjs",
+    "test:release-local": "node --conditions=react-server --experimental-strip-types --test scripts/material-review-db.test.mjs scripts/material-review-api.test.cjs scripts/material-review-queue.test.cjs scripts/material-review-export.test.mjs scripts/material-list-projection.test.mjs scripts/material-insights.test.mjs scripts/reviewer-rpc.test.mjs scripts/configuration-guard.test.mjs scripts/collection-polling.test.mjs scripts/egress-p1.test.mjs scripts/workflow-contracts.test.mjs scripts/supplier-options.test.cjs scripts/attachment-review-db.test.mjs scripts/attachment-review-api.test.cjs scripts/settings-safety.test.cjs scripts/login-error.test.mjs scripts/collection-coverage.test.mjs",
+    "check:migrations": "node scripts/check-migration-history.cjs",
+    "test:browser-material": "node scripts/run-material-browser.cjs",
+    "seed:suppliers": "node scripts/migrate-suppliers-to-supabase.mjs",
+    "seed:business": "node scripts/migrate-price-inquiry-data-to-supabase.mjs",
+    "test:attachment-review": "node --test scripts/attachment-review-db.test.mjs scripts/attachment-review-api.test.cjs"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "7.0.2",
     "lucide-react": "^1.17.0",
-    "next": "^16.2.7",
+    "next": "16.3.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "read-excel-file": "9.3.5",
     "recharts": "^3.8.1",
+    "server-only": "0.0.1",
     "tailwind-merge": "^3.6.0",
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^25.9.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.7",
+    "eslint-config-next": "16.3.4",
+    "playwright": "1.63.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss": "8.5.23",
+    "sharp": "0.35.4"
   }
 }

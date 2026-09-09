@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Clock3, DatabaseZap, Sparkles } from "lucide-react";
+import { Clock3, DatabaseZap, RefreshCw, Sparkles } from "lucide-react";
 import type { DashboardHeroData } from "@/data/mock/dashboard";
 
 type DashboardHeroProps = {
   data: DashboardHeroData;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 };
 
-export function DashboardHero({ data }: DashboardHeroProps) {
+export function DashboardHero({ data, refreshing = false, onRefresh }: DashboardHeroProps) {
   return (
     <section className="flex min-h-[66px] flex-col justify-between gap-1.5 rounded-card border border-ai-border bg-[linear-gradient(120deg,rgba(232,242,255,0.82),rgba(255,255,255,0.94)_48%,rgba(245,243,255,0.9))] px-4 py-1.5 shadow-card lg:flex-row lg:items-center">
       <div className="min-w-0 flex-1">
@@ -29,6 +31,11 @@ export function DashboardHero({ data }: DashboardHeroProps) {
           <Clock3 className="size-4 text-textMuted" aria-hidden="true" />
           更新 {data.updatedAt}
         </div>
+        {onRefresh ? (
+          <button type="button" onClick={onRefresh} disabled={refreshing} title="刷新首页数据" aria-label="刷新首页数据" className="inline-flex size-6 items-center justify-center rounded-pill border border-borderSoft bg-white/76 text-primary transition hover:bg-primary-soft disabled:opacity-60">
+            <RefreshCw className={`size-3.5 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
+          </button>
+        ) : null}
         <Link
           href="/ai-workbench"
           className="inline-flex h-6 items-center gap-1.5 rounded-pill bg-ai px-3 text-[11px] font-semibold text-white shadow-ai transition hover:bg-[#6D28D9]"

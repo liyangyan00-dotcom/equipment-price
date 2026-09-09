@@ -1,20 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Activity,
   Bot,
   Box,
-  CalendarDays,
-  ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Database,
   Download,
   Eye,
   FileSpreadsheet,
-  MapPinned,
   MoreHorizontal,
+  Pencil,
   Plus,
+  RefreshCcw,
   RotateCcw,
   Search,
   SearchCheck,
@@ -22,301 +24,169 @@ import {
   TrendingUp,
   Upload,
 } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { DataTable, ModuleHeader } from "@/components/common";
+
 import { AiBadge } from "@/components/badges/AiBadge";
 import { ConfidenceBadge } from "@/components/badges/ConfidenceBadge";
-import { StatusBadge } from "@/components/badges/StatusBadge";
+import { RiskBadge } from "@/components/badges/RiskBadge";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import {
-  materialKpis,
-  materialPriceRecords,
-  type MaterialPriceRecord,
-} from "@/data/mock/materialPrices";
+  DataTable,
+  LoadingButton,
+  ModuleHeader,
+  RouteContextBanner,
+} from "@/components/common";
+import type { MaterialPriceRecord } from "@/data/mock/materialPrices";
+import { materialDate, materialDateInRange, materialFacets, recentlyUpdated } from "@/lib/data/materialInsights";
+import { MaterialCollectionSuggestions, MaterialPriceInsights } from "@/components/material-workflow/MaterialPriceInsights";
 import { formatDate } from "@/lib/formatters";
+import { useMockToast } from "@/hooks/useMockToast";
 import { cn } from "@/lib/utils";
-import type { DataTableColumn } from "@/types/common";
+import { downloadCsv } from "@/lib/downloadCsv";
+import {
+  mapMaterialPriceRow,
+  type MaterialPriceDatabaseRow,
+} from "@/lib/data/priceInquiryMapper";
+import type { ConfidenceLevel, DataTableColumn, ReviewStatus, RiskLevel } from "@/types/common";
 
-const reviewLabel = {
-  pending: "待审核",
-  need_info: "需补充",
-  confirmed: "已审核",
-  rejected: "已退回",
-  voided: "已作废",
-} as const;
+type MaterialFilters = {
+  keyword: string;
+  category: string;
+  region: string;
+  unit: string;
+  source: string;
+  confidence: string;
+  reviewStatus: string;
+  riskLevel: string;
+  dateFrom: string;
+  dateTo: string;
+};
+
+type QuickFilter = "all" | "recent" | "ai" | "risk" | "review";
+
+const pageSize = 10;
+
+const defaultFilters: MaterialFilters = {
+  keyword: "",
+  category: "全部",
+  region: "全部",
+  unit: "全部",
+  source: "全部",
+  confidence: "全部",
+  reviewStatus: "全部",
+  riskLevel: "全部",
+  dateFrom: "",
+  dateTo: "",
+};
 
 const kpiConfig = [
-  {
-    icon: Box,
-    label: "地材价格条目",
-    valueClassName: "text-blue-600",
-    iconClassName: "from-blue-500 to-blue-600 text-white shadow-blue-500/25",
-    waveClassName: "text-blue-400",
-  },
-  {
-    icon: SearchCheck,
-    label: "今日AI采集线索",
-    valueClassName: "text-emerald-600",
-    iconClassName: "from-emerald-400 to-emerald-600 text-white shadow-emerald-500/25",
-    waveClassName: "text-emerald-400",
-  },
-  {
-    icon: FileSpreadsheet,
-    label: "待复核地材价格",
-    valueClassName: "text-orange-500",
-    iconClassName: "from-amber-400 to-orange-500 text-white shadow-orange-500/25",
-    waveClassName: "text-orange-400",
-  },
-  {
-    icon: TrendingUp,
-    label: "高速波动材料",
-    valueClassName: "text-red-500",
-    iconClassName: "from-red-400 to-red-600 text-white shadow-red-500/25",
-    waveClassName: "text-red-400",
-  },
-  {
-    icon: Bot,
-    label: "AI预警项",
-    valueClassName: "text-violet-600",
-    iconClassName: "from-violet-500 to-purple-600 text-white shadow-violet-500/25",
-    waveClassName: "text-violet-400",
-  },
-  {
-    icon: CalendarDays,
-    label: "本月更新",
-    valueClassName: "text-sky-500",
-    iconClassName: "from-cyan-400 to-sky-500 text-white shadow-cyan-500/25",
-    waveClassName: "text-sky-400",
-  },
+  { icon: Box, tone: "blue" },
+  { icon: RefreshCcw, tone: "green" },
+  { icon: Sparkles, tone: "purple" },
+  { icon: Activity, tone: "orange" },
 ] as const;
 
-const regionCompareData = [
-  { region: "Kinshasa", value: 3.69 },
-  { region: "Matadi", value: 3.12 },
-  { region: "Lubumbashi", value: 3.85 },
-  { region: "Goma", value: 4.08 },
-  { region: "Likasi", value: 3.45 },
-];
+const confidenceOptions = ["全部", "A", "B", "C", "D"];
+const reviewOptions: Array<"全部" | ReviewStatus> = ["全部", "confirmed", "pending", "need_info", "rejected"];
+const riskOptions: Array<"全部" | RiskLevel> = ["全部", "low", "medium", "high", "critical"];
 
-const collectionPieData = [
-  { name: "供应商网站", value: 32, percent: "37.2%", color: "#2F6BFF" },
-  { name: "行业媒体", value: 21, percent: "24.4%", color: "#7C3AED" },
-  { name: "招投标平台", value: 15, percent: "17.4%", color: "#58C29A" },
-  { name: "同行报价单", value: 10, percent: "11.6%", color: "#F5B84B" },
-  { name: "其他公开渠道", value: 8, percent: "9.3%", color: "#EF5A5A" },
-];
 
-const collectionSuggestions = [
-  { material: "沥青", spec: "60/70", region: "Kinshasa, Matadi", risk: "高", dots: 5 },
-  { material: "钢绞线", spec: "15.2mm", region: "Kinshasa", risk: "中", dots: 4 },
-  { material: "木方", spec: "50x100mm", region: "Kisantu", risk: "中", dots: 4 },
-  { material: "PVC管", spec: "DN160", region: "Kinshasa", risk: "低", dots: 2 },
-];
+function matchesConfidence(row: MaterialPriceRecord, value: string) {
+  if (value === "全部") return true;
+  if (value === "D") return row.confidence === "D" || row.confidence === "E";
+  return row.confidence === value;
+}
 
-const gapWarnings = [
-  { title: "缺口预警", value: "12", text: "缺口材料需补采" },
-  { title: "高风险预警", value: "5", text: "波动超过阈值" },
-  { title: "中风险预警", value: "7", text: "样本不足或过期" },
-];
+function matchesQuickFilter(row: MaterialPriceRecord, quick: QuickFilter) {
+  if (quick === "all") return true;
+  if (quick === "recent") return recentlyUpdated(row.updatedAt);
+  if (quick === "ai") return row.source.includes("AI");
+  if (quick === "risk") return row.riskLevel === "high" || row.riskLevel === "critical";
+  if (quick === "review") return row.reviewStatus === "pending" || row.reviewStatus === "need_info";
+  return true;
+}
 
-const columns: DataTableColumn<MaterialPriceRecord>[] = [
-  { key: "materialCode", header: "材料编号", className: "min-w-[126px] whitespace-nowrap" },
-  {
-    key: "materialName",
-    header: "材料名称",
-    className: "min-w-[118px]",
-    render: (row) => (
-      <div>
-        <div className="font-semibold text-textMain">{row.materialName}</div>
-        <div className="mt-0.5 text-[11px] text-textMuted">{row.source}</div>
-      </div>
-    ),
-  },
-  { key: "category", header: "类别", className: "min-w-[70px] whitespace-nowrap" },
-  { key: "specification", header: "规格", className: "min-w-[98px] whitespace-nowrap" },
-  {
-    key: "region",
-    header: "地区",
-    className: "min-w-[88px] whitespace-nowrap",
-    render: (row) => (
-      <span className="inline-flex items-center gap-1 text-textSecondary">
-        <MapPinned className="size-3.5 text-cyan" aria-hidden="true" />
-        {row.region}
-      </span>
-    ),
-  },
-  { key: "unit", header: "单位", className: "min-w-[48px] whitespace-nowrap" },
-  {
-    key: "originalPrice",
-    header: "原始价格",
-    align: "right",
-    className: "min-w-[82px] whitespace-nowrap",
-    render: (row) => <span className="font-semibold tabular-nums text-textMain">{row.originalPrice.toLocaleString("zh-CN")}</span>,
-  },
-  { key: "currency", header: "币种", className: "min-w-[48px] whitespace-nowrap" },
-  {
-    key: "usdPrice",
-    header: "折算美元价",
-    align: "right",
-    className: "min-w-[82px] whitespace-nowrap",
-    render: (row) => <span className="font-semibold tabular-nums text-textMain">{row.usdPrice.toLocaleString("zh-CN")}</span>,
-  },
-  {
-    key: "quoteDate",
-    header: "报价日期",
-    className: "min-w-[86px] whitespace-nowrap",
-    render: (row) => <span className="text-textMuted">{formatDate(row.quoteDate)}</span>,
-  },
-  { key: "transportCondition", header: "运输条件", className: "min-w-[92px] whitespace-nowrap" },
-  {
-    key: "confidence",
-    header: "可信度",
-    className: "min-w-[74px] whitespace-nowrap",
-    render: (row) => <ConfidenceBadge level={row.confidence} showPrefix={false} className="h-5 px-1.5 text-[11px]" />,
-  },
-  {
-    key: "reviewStatus",
-    header: "审核状态",
-    className: "min-w-[74px] whitespace-nowrap",
-    render: (row) => <StatusBadge status={row.reviewStatus} label={reviewLabel[row.reviewStatus]} className="h-5 text-[11px]" />,
-  },
-  {
-    key: "source",
-    header: "来源",
-    className: "min-w-[70px] whitespace-nowrap",
-    render: (row) => <AiBadge label={row.source} className="h-5 px-1.5 text-[10px]" />,
-  },
-  {
-    key: "actions",
-    header: "操作",
-    align: "center",
-    className: "min-w-[78px] whitespace-nowrap",
-    render: (row) => (
-      <div className="flex items-center justify-center gap-2 text-primary">
-        <Link href={`/material-prices/${row.id}`} aria-label="????">
-          <Eye className="size-4" />
-        </Link>
-        <button type="button" aria-label="趋势">
-          <Activity className="size-4" />
-        </button>
-        <button type="button" aria-label="更多">
-          <MoreHorizontal className="size-4" />
-        </button>
-      </div>
-    ),
-  },
-];
+function matchesFilters(row: MaterialPriceRecord, filters: MaterialFilters, quick: QuickFilter) {
+  const keyword = filters.keyword.trim().toLowerCase();
+  const text = [
+    row.materialCode,
+    row.materialName,
+    row.category,
+    row.specification,
+    row.region,
+    row.source,
+    row.transportCondition,
+  ]
+    .join(" ")
+    .toLowerCase();
 
-function MiniWave({ className }: { className?: string }) {
   return (
-    <svg className={cn("h-5 w-14", className)} viewBox="0 0 60 20" fill="none" aria-hidden="true">
-      <path d="M2 14 C8 14 10 7 16 7 C22 7 23 15 30 15 C36 15 38 5 44 5 C50 5 51 12 58 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
+    matchesQuickFilter(row, quick) &&
+    (!keyword || text.includes(keyword)) &&
+    (filters.category === "全部" || row.category === filters.category) &&
+    (filters.region === "全部" || row.region === filters.region) &&
+    (filters.unit === "全部" || row.unit === filters.unit) &&
+    (filters.source === "全部" || row.source === filters.source) &&
+    matchesConfidence(row, filters.confidence) &&
+    (filters.reviewStatus === "全部" || row.reviewStatus === filters.reviewStatus) &&
+    (filters.riskLevel === "全部" || row.riskLevel === filters.riskLevel) &&
+    materialDateInRange(row.quoteDate, filters.dateFrom, filters.dateTo)
   );
 }
 
-function MaterialKpiGrid() {
-  const items = [
-    materialKpis[0],
-    materialKpis[2],
-    materialKpis[3],
-    materialKpis[4],
-    { ...materialKpis[3], label: "AI预警项", value: "12", unit: "项", trend: "较昨日 +3项" },
-    materialKpis[1],
-  ];
+
+function MaterialKpiGrid({
+  items,
+  activeQuick,
+  onKpiClick,
+}: {
+  items: Array<{ label: string; value: string; unit: string; description: string }>;
+  activeQuick: QuickFilter;
+  onKpiClick: (quick: QuickFilter) => void;
+}) {
+  const quickMap: QuickFilter[] = ["all", "recent", "ai", "review", "risk", "all"];
+  const colorByTone = {
+    blue: "from-blue-50 to-white text-blue-600 border-blue-100",
+    green: "from-emerald-50 to-white text-emerald-600 border-emerald-100",
+    purple: "from-violet-50 to-white text-violet-600 border-violet-100",
+    orange: "from-orange-50 to-white text-orange-600 border-orange-100",
+    red: "from-red-50 to-white text-red-600 border-red-100",
+  };
 
   return (
-    <div className="grid gap-3 xl:grid-cols-6">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
       {items.map((item, index) => {
-        const config = kpiConfig[index];
+        const config = kpiConfig[index % kpiConfig.length];
         const Icon = config.icon;
+        const quick = quickMap[index] ?? "all";
+        const active = activeQuick === quick && index !== 5;
 
         return (
-          <section key={`${config.label}-${index}`} className="min-h-[90px] rounded-[10px] border border-borderSoft bg-white px-4 py-3 shadow-card">
-            <div className="flex items-start justify-between">
+          <button
+            key={item.label}
+            type="button"
+            onClick={() => onKpiClick(quick)}
+            className={cn(
+              "group h-[98px] rounded-card border bg-gradient-to-br p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-cardHover",
+              colorByTone[config.tone],
+              active && "ring-2 ring-primary/30"
+            )}
+          >
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className={cn("text-[13px] font-semibold", config.valueClassName)}>{config.label}</p>
-                <div className="mt-1 flex items-end gap-1.5">
-                  <span className={cn("text-[28px] font-bold leading-8", config.valueClassName)}>{item.value}</span>
-                  <span className={cn("mb-1 text-[12px] font-semibold", config.valueClassName)}>{item.unit}</span>
+                <p className="text-[12px] font-semibold">{item.label}</p>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-2xl font-bold tracking-normal text-slate-950">{item.value}</span>
+                  <span className="text-[11px] font-semibold">{item.unit}</span>
                 </div>
+                <p className="mt-1 text-[11px] text-slate-500">{item.description}</p>
               </div>
-              <span className={cn("flex size-11 items-center justify-center rounded-[12px] bg-gradient-to-br shadow-lg", config.iconClassName)}>
-                <Icon className="size-7" aria-hidden="true" />
-              </span>
+              <div className="flex flex-col items-end gap-1">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/80 shadow-sm transition group-hover:scale-105">
+                  <Icon className="h-5 w-5" />
+                </span>
+              </div>
             </div>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <span className="text-[12px] font-medium text-textMuted">{item.trend}</span>
-              <MiniWave className={config.waveClassName} />
-            </div>
-          </section>
-        );
-      })}
-    </div>
-  );
-}
-
-function FilterSelect({ label, wide }: { label: string; wide?: boolean }) {
-  return (
-    <div className={cn("min-w-0", wide ? "w-[158px]" : "w-[82px]")}>
-      <div className="mb-1 text-[12px] font-semibold text-textSecondary">{label}</div>
-      <button type="button" className="flex h-9 w-full items-center justify-between rounded-md border border-borderSoft bg-white px-2 text-[12px] text-textSecondary">
-        <span>{wide ? "请输入材料名称/编号/规格" : "全部"}</span>
-        {wide ? <Search className="size-4 text-textMuted" /> : <ChevronDown className="size-4 text-textMuted" />}
-      </button>
-    </div>
-  );
-}
-
-function MaterialFilterPanel() {
-  return (
-    <section className="rounded-card border border-borderSoft bg-white p-3 shadow-card">
-      <div className="flex flex-wrap items-end gap-1.5">
-        <FilterSelect label="材料搜索" wide />
-        <FilterSelect label="类别" />
-        <FilterSelect label="地区" />
-        <FilterSelect label="供应商" />
-        <FilterSelect label="运输条件" />
-        <FilterSelect label="可信度" />
-        <FilterSelect label="审核状态" />
-        <button type="button" className="inline-flex h-9 items-center gap-1 rounded-md border border-borderSoft bg-white px-2.5 text-[12px] font-semibold text-primary shadow-sm">
-          展开
-          <ChevronDown className="size-4" />
-        </button>
-        <button type="button" className="inline-flex h-9 items-center gap-1 rounded-md border border-borderSoft bg-white px-2.5 text-[12px] font-semibold text-textSecondary shadow-sm">
-          <Database className="size-4" />
-          列设置
-        </button>
-        <button type="button" className="inline-flex h-9 items-center gap-1 rounded-md bg-primary px-3 text-[12px] font-semibold text-white shadow-sm">
-          <Search className="size-4" />
-          查询
-        </button>
-        <button type="button" className="inline-flex h-9 items-center gap-1 rounded-md border border-borderSoft bg-white px-2.5 text-[12px] font-semibold text-textSecondary shadow-sm">
-          <RotateCcw className="size-4" />
-          重置
-        </button>
-      </div>
-    </section>
-  );
-}
-
-function MaterialActionBar() {
-  const actions = [
-    { label: "新增地材价格", icon: Plus, className: "bg-primary text-white border-primary" },
-    { label: "导入调研表", icon: Upload, className: "bg-white text-success border-success/30" },
-    { label: "AI采集线索", icon: Sparkles, className: "bg-ai-soft text-ai border-ai-border" },
-    { label: "AI整理记录", icon: Bot, className: "bg-white text-primary border-primary/20" },
-    { label: "导出价格表", icon: Download, className: "bg-white text-textSecondary border-borderSoft" },
-  ];
-
-  return (
-    <div className="flex flex-nowrap gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      {actions.map((action) => {
-        const Icon = action.icon;
-        return (
-          <button key={action.label} type="button" className={cn("inline-flex h-9 min-w-[110px] shrink-0 items-center justify-center gap-1.5 rounded-md border px-3 text-[12px] font-semibold shadow-sm", action.className)}>
-            <Icon className="size-4" />
-            {action.label}
           </button>
         );
       })}
@@ -324,354 +194,679 @@ function MaterialActionBar() {
   );
 }
 
-function CollectionSidePanel() {
+function FilterSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
   return (
-    <section className="rounded-card border border-borderSoft bg-white p-3 shadow-card">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-[17px] font-bold text-textMain">AI建议补充采集</h3>
-        <button className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary">
-          <RotateCcw className="size-3.5" />
-          换一批
-        </button>
-      </div>
-      <div className="mb-3 grid grid-cols-2 rounded-lg border border-borderSoft bg-[var(--color-bg-muted)] p-1 text-center text-[13px] font-semibold">
-        <button className="h-8 rounded-md bg-primary-soft text-primary shadow-sm">建议采集 <span className="ml-1 rounded-full bg-primary/10 px-1.5 text-[11px]">8</span></button>
-        <button className="h-8 rounded-md text-textMuted">已采集 <span className="ml-1">12</span></button>
-      </div>
-      <div className="space-y-3">
-        {collectionSuggestions.map((item) => (
-          <div key={item.material} className="rounded-xl border border-borderSoft bg-white p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white shadow-sm">
-                  <SearchCheck className="size-4" />
-                </span>
-                <div className="min-w-0">
-                  <div className="truncate text-[14px] font-bold text-textMain">{item.material}（{item.spec}）</div>
-                  <p className="truncate text-[12px] text-textMuted">{item.material}</p>
-                </div>
-              </div>
-              <button className="h-8 shrink-0 rounded-md border border-primary/40 bg-white px-3 text-[13px] font-bold text-primary shadow-sm">去采集</button>
-            </div>
-            <div className="mt-3 space-y-2 text-[12px] text-textMuted">
-              <div>建议地区：<span className="font-semibold text-textSecondary">{item.region}</span></div>
-              <div className="flex items-center justify-between">
-                <span>缺口指数：
-                  <span className={cn("ml-1", item.risk === "低" ? "text-success" : "text-danger")}>{"●".repeat(item.dots)}</span>
-                <span className="text-borderSoft">{"○".repeat(5 - item.dots)}</span>
-                </span>
-                <span className={cn("rounded-md px-2 py-1 text-[12px] font-bold", item.risk === "高" ? "bg-danger-soft text-danger" : item.risk === "中" ? "bg-warning-soft text-warning" : "bg-success-soft text-success")}>{item.risk}</span>
-              </div>
-            </div>
-          </div>
+    <label className="grid gap-1 text-[11px] font-semibold text-slate-500">
+      {label}
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-9 rounded-lg border border-borderSoft bg-white px-3 text-[13px] font-medium text-slate-700 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option === "confirmed"
+              ? "已审核"
+              : option === "pending"
+                ? "待审核"
+                : option === "need_info"
+                  ? "需补充"
+                  : option === "rejected"
+                    ? "已驳回"
+                    : option === "low"
+                      ? "低风险"
+                      : option === "medium"
+                        ? "中风险"
+                        : option === "high"
+                          ? "高风险"
+                          : option === "critical"
+                            ? "严重风险"
+                            : option}
+          </option>
         ))}
-      </div>
-      <button className="mt-4 inline-flex w-full items-center justify-center gap-1 text-[13px] font-bold text-primary">
-        查看全部建议（8）<ChevronRight className="size-4" />
-      </button>
-    </section>
+      </select>
+    </label>
   );
 }
 
-function MarketResearchCard() {
-  const stats = [
-    { label: "今日新增线索", value: "86", unit: "条", className: "text-primary bg-primary-soft border-primary/15" },
-    { label: "已整理入库", value: "68", unit: "条", className: "text-success bg-success-soft border-success/15" },
-    { label: "AI提取准确率", value: "92.6", unit: "%", className: "text-ai bg-ai-soft border-ai-border" },
-    { label: "待人工复核", value: "12", unit: "条", className: "text-danger bg-danger-soft border-danger/15" },
-  ];
-
+function MaterialFilterPanel({
+  records,
+  filters,
+  onChange,
+  onSubmit,
+  onReset,
+}: {
+  records: MaterialPriceRecord[];
+  filters: MaterialFilters;
+  onChange: (patch: Partial<MaterialFilters>) => void;
+  onSubmit: () => void;
+  onReset: () => void;
+}) {
   return (
-    <section className="rounded-card border border-borderSoft bg-white p-4 shadow-card">
-      <div className="mb-3 flex items-start justify-between">
-        <h3 className="text-[17px] font-bold text-textMain">AI市场调研整理</h3>
-        <button className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary">
-          查看详情 <ChevronRight className="size-4" />
-        </button>
-      </div>
-      <div className="grid grid-cols-4 gap-2">
-        {stats.map((item) => (
-          <div key={item.label} className={cn("rounded-lg border px-2 py-2 text-center", item.className)}>
-            <div className="text-[22px] font-bold leading-6">
-              {item.value}
-              <span className="ml-0.5 text-[11px]">{item.unit}</span>
-            </div>
-            <div className="mt-1 text-[11px] font-semibold text-textSecondary">{item.label}</div>
-          </div>
-        ))}
-      </div>
-      <h4 className="mt-4 text-[14px] font-bold text-textMain">近期AI采集来源分布</h4>
-      <div className="mt-2 grid grid-cols-[168px_1fr] items-center gap-4">
-        <div className="relative flex h-[156px] items-center justify-center">
-          <div
-            className="size-[144px] rounded-full"
-            style={{
-              background:
-                "conic-gradient(#2F6BFF 0 37.2%, #7C3AED 37.2% 61.6%, #58C29A 61.6% 79%, #F5B84B 79% 90.6%, #EF5A5A 90.6% 100%)",
-            }}
-          />
-          <div className="absolute size-[88px] rounded-full border border-borderSoft bg-white" />
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[24px] font-bold text-textMain">86</span>
-            <span className="text-[12px] font-semibold text-textMuted">总计（条）</span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          {collectionPieData.map((item) => (
-            <div key={item.name} className="grid grid-cols-[12px_1fr_78px] items-center gap-2 text-[12px]">
-              <span className="size-3 rounded-sm" style={{ background: item.color }} />
-              <span className="truncate font-medium text-textSecondary">{item.name}</span>
-              <span className="text-right text-textMuted">{item.value} ({item.percent})</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PriceTrendCard() {
-  const topItems = [
-    { label: "柴油（ENS90）", value: "28.4%", color: "bg-primary", className: "text-danger" },
-    { label: "钢筋 HRB400（Φ16mm）", value: "18.7%", color: "bg-success", className: "text-danger" },
-    { label: "水泥（CEM II 42.5R）", value: "12.7%", color: "bg-warning", className: "text-danger" },
-  ];
-
-  return (
-    <section className="rounded-card border border-borderSoft bg-white p-4 shadow-card">
-      <div className="mb-3 flex items-start justify-between">
-        <h3 className="text-[17px] font-bold text-textMain">AI价格波动分析</h3>
-        <button className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary">
-          查看详情 <ChevronRight className="size-4" />
-        </button>
-      </div>
-      <div className="text-[13px] font-bold text-textSecondary">主要材料折算美元价趋势 <span className="ml-1 text-[12px] font-semibold text-textMuted">（USD/单位）</span></div>
-      <div className="mt-3 flex justify-center gap-4 text-[12px] font-semibold text-textSecondary">
-        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-5 rounded bg-primary" />水泥</span>
-        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-5 rounded bg-success" />钢筋</span>
-        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-5 rounded bg-ai" />柴油</span>
-        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-5 rounded bg-warning" />砂石</span>
-      </div>
-      <div className="mt-2">
-        <svg viewBox="0 0 320 170" className="h-[170px] w-full" aria-label="主要材料折算美元价趋势">
-          {[28, 64, 100, 136].map((y) => (
-            <line key={y} x1="34" x2="306" y1={y} y2={y} stroke="#E5EDF7" strokeDasharray="4 4" />
-          ))}
-          {[250, 200, 150, 100, 50, 0].map((label, index) => (
-            <text key={label} x="6" y={20 + index * 28} fill="#64748B" fontSize="10">{label}</text>
-          ))}
-          {["04-21", "04-28", "05-05", "05-12", "05-19", "05-20"].map((label, index) => (
-            <text key={label} x={34 + index * 52} y="164" fill="#64748B" fontSize="10">{label}</text>
-          ))}
-          <polyline points="36,72 88,68 140,61 192,55 244,51 296,43" fill="none" stroke="#2F6BFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points="36,105 88,101 140,98 192,93 244,89 296,84" fill="none" stroke="#58C29A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points="36,129 88,126 140,124 192,120 244,116 296,113" fill="none" stroke="#7C3AED" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points="36,121 88,118 140,116 192,111 244,106 296,101" fill="none" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          {[36, 88, 140, 192, 244, 296].map((x, i) => (
-            <circle key={`cement-${x}`} cx={x} cy={[72, 68, 61, 55, 51, 43][i]} r="3" fill="#2F6BFF" />
-          ))}
-        </svg>
-      </div>
-      <div className="border-t border-borderSoft pt-3">
-        <div className="mb-2 text-[14px] font-bold text-primary">本月波动Top3</div>
-        <div className="space-y-1.5">
-          {topItems.map((item) => (
-            <div key={item.label} className="grid grid-cols-[14px_1fr_58px] items-center gap-2 text-[12px]">
-              <span className={cn("size-2.5 rounded-full", item.color)} />
-              <span className="font-medium text-textSecondary">{item.label}</span>
-              <span className={cn("text-right font-bold", item.className)}>↑ {item.value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function RegionCompareCard() {
-  const advice = [
-    { text: "Kinshasa 价格最低，建议优先比价采购", color: "bg-success" },
-    { text: "Matadi 与 Kinshasa 差异较小，可考虑就近采购", color: "bg-warning" },
-    { text: "Goma 价格偏高，建议关注运输方式优化", color: "bg-danger" },
-  ];
-
-  return (
-    <section className="rounded-card border border-borderSoft bg-white p-4 shadow-card">
-      <div className="mb-3 flex items-start justify-between">
-        <h3 className="text-[17px] font-bold text-textMain">AI地区价格对比建议</h3>
-        <button className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary">
-          查看详情 <ChevronRight className="size-4" />
-        </button>
-      </div>
-      <div className="text-[13px] font-bold text-textSecondary">水泥（CEM II 42.5R） 折算美元价（USD/袋）</div>
-      <div className="mt-3 flex h-[174px] items-end gap-4 border-b border-l border-borderSoft px-3 pb-6">
-        {regionCompareData.map((item, index) => (
-          <div key={item.region} className="flex flex-1 flex-col items-center gap-1">
-            <span className="text-[12px] font-bold text-textSecondary">{item.value}</span>
-            <div
-              className="w-full max-w-[42px] rounded-t-md"
-              style={{
-                height: `${item.value * 28}px`,
-                background: ["#2F6BFF", "#14B8A6", "#58C29A", "#38BDF8", "#60A5FA"][index],
+    <div className="overflow-x-auto rounded-card border border-borderSoft bg-white p-3 shadow-card" data-no-global-interaction>
+      <div className="grid min-w-[1120px] grid-cols-[minmax(220px,1.5fr)_repeat(7,minmax(96px,1fr))_auto_auto] items-end gap-2">
+        <label className="grid gap-1 text-[11px] font-semibold text-slate-500">
+          材料搜索
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              value={filters.keyword}
+              onChange={(event) => onChange({ keyword: event.target.value })}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") onSubmit();
               }}
+              placeholder="搜索材料名称、规格、地区或来源"
+              className="h-9 w-full rounded-lg border border-borderSoft bg-white pl-9 pr-3 text-[13px] font-medium outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
-            <span className="mt-1 text-[10px] text-textMuted">{item.region}</span>
           </div>
-        ))}
-      </div>
-      <div className="border-t border-borderSoft pt-3">
-        <div className="mb-2 text-[14px] font-bold text-primary">AI建议</div>
-        <div className="space-y-2">
-          {advice.map((item) => (
-            <div key={item.text} className="flex items-center gap-2 text-[12px] text-textSecondary">
-              <span className={cn("size-2.5 rounded-full", item.color)} />
-              <span>{item.text}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function GapWarningCard() {
-  const topItems = [
-    { material: "沥青（60/70）", risk: "高", dots: 5, color: "bg-danger", text: "text-danger" },
-    { material: "钢绞线（15.2mm）", risk: "中", dots: 4, color: "bg-orange-500", text: "text-orange-500" },
-    { material: "木方（50x100mm）", risk: "中", dots: 4, color: "bg-warning", text: "text-warning" },
-    { material: "PVC管（DN160）", risk: "低", dots: 2, color: "bg-success", text: "text-success" },
-    { material: "玻璃纤维网格布", risk: "低", dots: 2, color: "bg-success", text: "text-success" },
-  ];
-
-  return (
-    <section className="rounded-card border border-borderSoft bg-white p-4 shadow-card">
-      <div className="mb-3 flex items-start justify-between">
-        <h3 className="text-[17px] font-bold text-textMain">AI价格缺口预警</h3>
-        <button className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary">
-          查看详情 <ChevronRight className="size-4" />
+        </label>
+        <FilterSelect label="类别" value={filters.category} options={["全部", ...materialFacets(records, "category")]} onChange={(value) => onChange({ category: value })} />
+        <FilterSelect label="地区" value={filters.region} options={["全部", ...materialFacets(records, "region")]} onChange={(value) => onChange({ region: value })} />
+        <FilterSelect label="单位" value={filters.unit} options={["全部", ...materialFacets(records, "unit")]} onChange={(value) => onChange({ unit: value })} />
+        <FilterSelect label="来源" value={filters.source} options={["全部", ...materialFacets(records, "source")]} onChange={(value) => onChange({ source: value })} />
+        <FilterSelect label="可信度" value={filters.confidence} options={confidenceOptions} onChange={(value) => onChange({ confidence: value })} />
+        <FilterSelect label="审核状态" value={filters.reviewStatus} options={reviewOptions} onChange={(value) => onChange({ reviewStatus: value })} />
+        <FilterSelect label="风险等级" value={filters.riskLevel} options={riskOptions} onChange={(value) => onChange({ riskLevel: value })} />
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-borderSoft bg-white px-4 text-[13px] font-semibold text-slate-600 transition hover:bg-slate-50"
+        >
+          <RotateCcw className="h-4 w-4" />
+          重置
+        </button>
+        <button
+          type="button"
+          onClick={onSubmit}
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-primary/90"
+        >
+          <SearchCheck className="h-4 w-4" />
+          查询
         </button>
       </div>
-      <div className="grid grid-cols-3 gap-2">
-        {gapWarnings.map((item, index) => (
-          <div key={item.title} className={cn("rounded-lg border p-3 text-center", index === 0 ? "border-danger/15 bg-danger-soft" : index === 1 ? "border-danger/10 bg-danger-soft/60" : "border-warning/20 bg-warning-soft")}>
-            <div className={cn("text-[22px] font-bold", index === 0 ? "text-danger" : index === 1 ? "text-danger" : "text-warning")}>
-              {item.value}
-              <span className="ml-0.5 text-[11px]">项</span>
-            </div>
-            <div className="mt-1 text-[12px] font-semibold text-textSecondary">{item.title}</div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 text-[14px] font-bold text-textMain">缺口Top5</div>
-      <div className="mt-2 space-y-2.5">
-        {topItems.map((item) => (
-          <div key={item.material} className="grid grid-cols-[18px_1fr_92px_30px] items-center gap-2 text-[12px]">
-            <span className={cn("flex size-5 items-center justify-center rounded-full text-[12px] font-bold text-white", item.color)}>!</span>
-            <span className="truncate font-bold text-textSecondary">{item.material}</span>
-            <span className={cn("text-right", item.text)}>
-              {"●".repeat(item.dots)}
-              <span className="text-borderSoft">{"○".repeat(5 - item.dots)}</span>
-            </span>
-            <span className={cn("rounded px-1.5 py-0.5 text-center text-[11px] font-semibold", item.risk === "高" ? "bg-danger-soft text-danger" : item.risk === "中" ? "bg-warning-soft text-warning" : "bg-success-soft text-success")}>{item.risk}</span>
-          </div>
-        ))}
-      </div>
-      <button className="mt-4 inline-flex w-full items-center justify-center gap-1 text-[13px] font-semibold text-primary">
-        查看全部预警（12）<ChevronRight className="size-4" />
-      </button>
-    </section>
+    </div>
   );
 }
 
-function MaterialBottomActions() {
-  const actions = [
-    { label: "新增地材价格", icon: Plus, className: "bg-primary text-white border-primary" },
-    { label: "导入调研表", icon: Upload, className: "bg-white text-success border-success/40" },
-    { label: "AI采集线索", icon: Sparkles, className: "bg-ai-soft text-ai border-ai-border" },
-    { label: "AI整理记录", icon: Bot, className: "bg-white text-primary border-primary/25" },
-    { label: "导出价格表", icon: Download, className: "bg-white text-textSecondary border-borderSoft" },
-  ];
-
+function MaterialActionBar({
+  total,
+  selectedCount,
+  allVisibleSelected,
+  onToggleVisible,
+  onCreate,
+  onUpload,
+  onCollect,
+  onAiOrganize,
+  onInquiry,
+  onExport,
+  onMore,
+  aiOrganizeLoading,
+}: {
+  total: number;
+  selectedCount: number;
+  allVisibleSelected: boolean;
+  onToggleVisible: () => void;
+  onCreate: () => void;
+  onUpload: () => void;
+  onCollect: () => void;
+  onAiOrganize: () => void;
+  onInquiry: () => void;
+  onExport: () => void;
+  onMore: () => void;
+  aiOrganizeLoading: boolean;
+}) {
   return (
-    <section className="rounded-card border border-borderSoft bg-white p-3 shadow-card">
-      <div className="grid gap-3 md:grid-cols-5">
-        {actions.map((action) => {
-          const Icon = action.icon;
-          return (
-            <button key={action.label} className={cn("inline-flex h-10 items-center justify-center gap-2 rounded-md border text-[13px] font-semibold shadow-sm", action.className)}>
-              <Icon className="size-4" />
-              {action.label}
-            </button>
-          );
-        })}
+    <div className="flex min-h-12 min-w-0 items-center justify-between gap-3 overflow-x-auto rounded-card border border-borderSoft bg-white px-3 py-1 shadow-card" data-no-global-interaction>
+      <div className="flex shrink-0 items-center gap-3 whitespace-nowrap text-[12px] font-semibold text-slate-500">
+        <label className="inline-flex items-center gap-2 rounded-lg border border-borderSoft bg-slate-50 px-3 py-2 text-slate-600">
+          <input type="checkbox" checked={allVisibleSelected} onChange={onToggleVisible} className="h-4 w-4 rounded border-slate-300" />
+          选择当前页
+        </label>
+        <span>共 {total} 条</span>
+        <span className="text-primary">已选 {selectedCount} 条</span>
       </div>
-    </section>
+      <div className="flex shrink-0 items-center gap-2">
+        <button type="button" onClick={onCreate} className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-[13px] font-semibold text-white shadow-sm hover:bg-primary/90">
+          <Plus className="h-4 w-4" />
+          新增地材价格
+        </button>
+        <button type="button" onClick={onUpload} className="inline-flex h-9 items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 text-[13px] font-semibold text-emerald-700 hover:bg-emerald-100">
+          <Upload className="h-4 w-4" />
+          导入调研表
+        </button>
+        <button type="button" onClick={onCollect} className="inline-flex h-9 items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-4 text-[13px] font-semibold text-violet-700 hover:bg-violet-100">
+          <Sparkles className="h-4 w-4" />
+          AI采集线索
+        </button>
+        <LoadingButton
+          loading={aiOrganizeLoading}
+          onClick={onAiOrganize}
+          className="h-9 border-blue-200 bg-blue-50 text-[13px] font-semibold text-blue-700 hover:bg-blue-100"
+        >
+          <Bot className="h-4 w-4" />
+          AI整理记录
+        </LoadingButton>
+        <button type="button" onClick={onInquiry} className="inline-flex h-9 items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 text-[13px] font-semibold text-amber-700 hover:bg-amber-100">
+          <FileSpreadsheet className="h-4 w-4" />
+          创建询价
+        </button>
+        <button type="button" onClick={onExport} className="inline-flex h-9 items-center gap-2 rounded-lg border border-borderSoft bg-white px-4 text-[13px] font-semibold text-slate-600 hover:bg-slate-50">
+          <Download className="h-4 w-4" />
+          导出价格表
+        </button>
+        <button type="button" onClick={onMore} className="inline-flex h-9 items-center gap-2 rounded-lg border border-borderSoft bg-white px-3 text-[13px] font-semibold text-slate-600 hover:bg-slate-50">
+          <MoreHorizontal className="h-4 w-4" />
+          更多
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+function MaterialBottomActions({ onCreate, onUpload, onCollect, onOrganize, onExport }: { onCreate: () => void; onUpload: () => void; onCollect: () => void; onOrganize: () => void; onExport: () => void }) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" data-no-global-interaction>
+      {[
+        { label: "新增地材价格", sub: "手工录入", icon: Plus, tone: "bg-primary text-white", onClick: onCreate },
+        { label: "导入调研表", sub: "Excel批量入库", icon: Upload, tone: "border-emerald-200 bg-emerald-50 text-emerald-700", onClick: onUpload },
+        { label: "AI采集线索", sub: "自动采集", icon: Sparkles, tone: "border-violet-200 bg-violet-50 text-violet-700", onClick: onCollect },
+        { label: "AI整理记录", sub: "归类与去重", icon: Bot, tone: "border-blue-200 bg-blue-50 text-blue-700", onClick: onOrganize },
+        { label: "导出价格表", sub: "输出Excel", icon: Download, tone: "border-borderSoft bg-white text-slate-700", onClick: onExport },
+      ].map((action) => {
+        const Icon = action.icon;
+        return (
+          <button key={action.label} type="button" onClick={action.onClick} className={cn("flex h-16 items-center justify-center gap-3 rounded-card border px-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-cardHover", action.tone)}>
+            <Icon className="h-5 w-5 shrink-0" />
+            <span>
+              <span className="block text-[13px] font-bold">{action.label}</span>
+              <span className="block text-[11px] opacity-80">{action.sub}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
 export default function MaterialPricesPage() {
+  const router = useRouter();
+  const toast = useMockToast();
+  const [aiOrganizing, setAiOrganizing] = useState(false);
+  const [filters, setFilters] = useState<MaterialFilters>(defaultFilters);
+  const [appliedFilters, setAppliedFilters] = useState<MaterialFilters>(defaultFilters);
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [activeId, setActiveId] = useState("");
+  const [page, setPage] = useState(1);
+  const [materialData, setMaterialData] = useState<MaterialPriceRecord[]>([]);
+  const [dataSource, setDataSource] = useState<"loading" | "supabase" | "error">("loading");
+  const [materialLeadSummary, setMaterialLeadSummary] = useState<{ pending: number; ready: number } | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const risk = params.get("risk");
+    const next = {
+      ...defaultFilters,
+      dateFrom: params.get("dateFrom") || "",
+      dateTo: params.get("dateTo") || "",
+      riskLevel: risk === "high" || risk === "critical" ? risk : "全部",
+    };
+    if (!next.dateFrom && !next.dateTo && next.riskLevel === "全部") return;
+    const timer = window.setTimeout(() => {
+      setFilters(next);
+      setAppliedFilters(next);
+      setQuickFilter(risk === "high" ? "risk" : "all");
+      setPage(1);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    fetch("/api/material-prices", { cache: "no-store", signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Supabase material query failed");
+        return response.json() as Promise<{ data: MaterialPriceDatabaseRow[] }>;
+      })
+      .then(({ data }) => {
+        if (!active) return;
+        const mapped = data.map((row) => mapMaterialPriceRow(row));
+        setMaterialData(mapped);
+        setDataSource("supabase");
+        const requestedLeadCodes = (new URLSearchParams(window.location.search).get("leadIds") || "").split(",").filter(Boolean);
+        const linkedRecord = requestedLeadCodes.length
+          ? mapped.find((record) => requestedLeadCodes.includes(String(record.collectionLeadCode || "")))
+          : undefined;
+        setActiveId((current) =>
+          linkedRecord?.id ?? (mapped.some((record) => record.id === current)
+            ? current
+            : mapped[0]?.id ?? ""),
+        );
+      })
+      .catch(() => {
+        if (active) {
+          setMaterialData([]);
+          setActiveId("");
+          setDataSource("error");
+          toast.danger("地材价格加载失败", "未使用 Mock 数据覆盖正式价格，请稍后重试。");
+        }
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [toast]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/price-collection?view=lead_pool&type=material&validity=all&page=1&pageSize=1", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Material lead summary query failed");
+        return response.json() as Promise<{ summary?: { pending?: number; ready?: number } }>;
+      })
+      .then(({ summary }) => {
+        if (active) setMaterialLeadSummary({ pending: Number(summary?.pending || 0), ready: Number(summary?.ready || 0) });
+      })
+      .catch(() => { if (active) setMaterialLeadSummary(null); });
+    return () => { active = false; };
+  }, []);
+
+  const dynamicKpis = useMemo(() => {
+    const recent = materialData.filter((item) => recentlyUpdated(item.updatedAt)).length;
+    const pendingReview = materialData.filter((item) => item.reviewStatus === "pending" || item.reviewStatus === "need_info").length;
+    const risks = materialData.filter((item) => item.riskLevel === "high" || item.riskLevel === "critical").length;
+    const regions = new Set(materialData.map((item) => item.region).filter(Boolean)).size;
+    return [
+      { label: "已加载地材价格", value: String(materialData.length), unit: "条", description: "当前已加载的价格库记录" },
+      { label: "近30天更新", value: String(recent), unit: "条", description: "按记录更新时间统计" },
+      { label: "AI采集线索", value: materialLeadSummary ? String(materialLeadSummary.pending + materialLeadSummary.ready) : "--", unit: "条", description: materialLeadSummary ? `待确认 ${materialLeadSummary.pending} · 可入库 ${materialLeadSummary.ready}` : "线索统计暂未获取" },
+      { label: "待审核价格", value: String(pendingReview), unit: "条", description: "正式库内待复核记录" },
+      { label: "价格异常", value: String(risks), unit: "项", description: "高风险与严重风险" },
+      { label: "覆盖地区", value: String(regions), unit: "个", description: "正式价格覆盖地区" },
+    ];
+  }, [materialData, materialLeadSummary]);
+
+  const filteredRecords = useMemo(
+    () => materialData.filter((record) => matchesFilters(record, appliedFilters, quickFilter)),
+    [appliedFilters, materialData, quickFilter]
+  );
+
+  const pageCount = Math.max(1, Math.ceil(filteredRecords.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pagedRecords = filteredRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const activeRecord = filteredRecords.find((record) => record.id === activeId) ?? pagedRecords[0];
+  const visibleIds = pagedRecords.map((record) => record.id);
+
+  const exportMaterialPrices = () => {
+    downloadCsv(
+      `地材价格表-${new Date().toISOString().slice(0, 10)}`,
+      ["价格编码", "材料名称", "类别", "规格", "单位", "原币价格", "币种", "美元价格", "地区", "供应商", "报价日期", "审核状态", "可信度", "风险等级"],
+      filteredRecords.map((record) => [
+        record.materialCode, record.materialName, record.category, record.specification,
+        record.unit, record.originalPrice, record.currency, record.usdPrice, record.region,
+        record.supplierName, record.quoteDate, record.reviewStatus, record.confidence, record.riskLevel,
+      ]),
+    );
+    toast.success("导出完成", `已导出 ${filteredRecords.length} 条当前筛选结果。`);
+  };
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
+
+  const goToPage = (nextPage: number) => {
+    const safePage = Math.min(Math.max(nextPage, 1), pageCount);
+    const firstRecord = filteredRecords[(safePage - 1) * pageSize];
+    setPage(safePage);
+    setActiveId(firstRecord?.id ?? "");
+  };
+
+  const patchFilters = (patch: Partial<MaterialFilters>) => setFilters((current) => ({ ...current, ...patch }));
+
+  const submitFilters = () => {
+    const nextRecords = materialData.filter((record) => matchesFilters(record, filters, quickFilter));
+    setAppliedFilters(filters);
+    setPage(1);
+    setSelectedIds([]);
+    setActiveId(nextRecords[0]?.id ?? "");
+    toast.success("已按当前条件筛选地材价格");
+  };
+
+  const resetFilters = () => {
+    setFilters(defaultFilters);
+    setAppliedFilters(defaultFilters);
+    setQuickFilter("all");
+    setPage(1);
+    setSelectedIds([]);
+    setActiveId(materialData[0]?.id ?? "");
+    toast.info("筛选条件已重置");
+  };
+
+  const handleKpiClick = (quick: QuickFilter) => {
+    if (quick === "ai") {
+      router.push("/price-leads?type=地材");
+      return;
+    }
+    const nextRecords = materialData.filter((record) => matchesFilters(record, appliedFilters, quick));
+    setQuickFilter(quick);
+    setPage(1);
+    setSelectedIds([]);
+    setActiveId(nextRecords[0]?.id ?? "");
+    toast.info(quick === "all" ? "已显示全部地材价格" : "已按KPI快速筛选");
+  };
+
+  const toggleRow = (id: string) => {
+    setActiveId(id);
+    setSelectedIds((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
+  };
+
+  const toggleVisible = () => {
+    setSelectedIds((current) => {
+      if (allVisibleSelected) return current.filter((id) => !visibleIds.includes(id));
+      return Array.from(new Set([...current, ...visibleIds]));
+    });
+  };
+
+  const selectedOrActiveIds = () => (selectedIds.length > 0 ? selectedIds : activeRecord ? [activeRecord.id] : []);
+
+  const requireSelection = (message = "请先选择至少一条地材价格记录") => {
+    if (selectedOrActiveIds().length === 0) {
+      toast.warning(message);
+      return false;
+    }
+    return true;
+  };
+
+  const handleCreate = () => {
+    router.push("/material-prices/create");
+  };
+
+  const handleCollect = () => {
+    const ids = selectedOrActiveIds();
+    if (ids.length === 0) {
+      toast.warning("请先选择要采集补充线索的地材");
+      return;
+    }
+    router.push(`/ai-price-collection?materialIds=${ids.join(",")}&source=material-prices`);
+  };
+
+  const handleInquiry = (ids = selectedOrActiveIds()) => {
+    if (ids.length === 0) {
+      toast.warning("请先选择要询价的地材");
+      return;
+    }
+    router.push(`/inquiries/create?materialIds=${ids.join(",")}&source=material-prices`);
+  };
+
+  const handleAiOrganize = async () => {
+    if (!requireSelection()) return;
+    const ids = selectedOrActiveIds();
+    setAiOrganizing(true);
+    try {
+      const response = await fetch("/api/ai/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workflowKey: "price_collection",
+          title: "整理地材价格记录",
+          sourceLabel: "地材价格库",
+          businessObjectType: "material_price",
+          businessHref: `/material-prices?ids=${ids.join(",")}`,
+          input: {
+            recordIds: ids,
+            records: materialData.filter((record) => ids.includes(record.id)).map((record) => ({
+              id: record.id,
+              code: record.materialCode,
+              name: record.materialName,
+              specification: record.specification,
+              price: record.originalPrice,
+              currency: record.currency,
+              source: record.source,
+              confidence: record.confidence,
+              riskLevel: record.riskLevel,
+            })),
+          },
+        }),
+      });
+      const payload = await response.json() as { data?: { task_code?: string }; error?: string };
+      if (!response.ok) throw new Error(payload.error || "AI 任务创建失败");
+      toast.ai("AI整理任务已入队", `${payload.data?.task_code ?? "任务"} 将输出置信度和风险提示，完成后需人工复核。`);
+      router.push("/ai-workbench?workflow=price_collection&status=needs_review");
+    } catch (error) {
+      toast.danger("AI整理任务创建失败", error instanceof Error ? error.message : "请稍后重试");
+    } finally {
+      setAiOrganizing(false);
+    }
+  };
+
+  const handleMore = () => toast.info("更多操作将在后续批量治理中开放");
+
+  const handleTrend = useCallback((row: MaterialPriceRecord) => {
+    setActiveId(row.id);
+    document.querySelector('[aria-label="地材样本分析"]')?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
+
+  const columns = useMemo<DataTableColumn<MaterialPriceRecord>[]>(
+    () => [
+      {
+        key: "select",
+        header: "选择",
+        align: "center",
+        className: "w-[44px]",
+        render: (row) => (
+          <input
+            type="checkbox"
+            checked={selectedIds.includes(row.id)}
+            onChange={() => toggleRow(row.id)}
+            onClick={(event) => event.stopPropagation()}
+            className="h-4 w-4 rounded border-slate-300"
+            aria-label={`选择${row.materialName}`}
+          />
+        ),
+      },
+      {
+        key: "materialCode",
+        header: "材料编号",
+        className: "min-w-[130px]",
+        render: (row) => (
+          <button type="button" onClick={() => setActiveId(row.id)} className="text-left font-semibold text-primary hover:underline">
+            {row.materialCode}
+          </button>
+        ),
+      },
+      {
+        key: "materialName",
+        header: "材料名称",
+        className: "min-w-[170px]",
+        render: (row) => (
+          <div className="max-w-[150px]" title={`${row.materialName} ${row.specification}`}>
+            <p className="truncate font-semibold text-slate-900">{row.materialName}</p>
+            <p className="truncate text-[11px] text-slate-500">{row.specification}</p>
+          </div>
+        ),
+      },
+      { key: "category", header: "材料类别", className: "min-w-[92px]", render: (row) => <span className="font-medium text-slate-700">{row.category}</span> },
+      { key: "unit", header: "单位", align: "center", className: "min-w-[64px]" },
+      {
+        key: "usdPrice",
+        header: "最新价格",
+        align: "right",
+        className: "min-w-[112px]",
+        render: (row) => (
+          <div className="font-semibold text-slate-950">
+            {row.currency} {row.originalPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            <p className="text-[11px] font-medium text-slate-500">/ {row.unit}</p>
+          </div>
+        ),
+      },
+      { key: "currency", header: "币种", align: "center", className: "min-w-[72px]" },
+      { key: "region", header: "地区", className: "min-w-[92px]", render: (row) => <span className="font-medium text-slate-700">{row.region}</span> },
+      { key: "source", header: "来源", className: "min-w-[118px]", render: (row) => (row.source.includes("AI") ? <AiBadge label={row.source} /> : <span className="rounded-full bg-blue-50 px-2 py-1 text-[12px] font-semibold text-blue-700">{row.source}</span>) },
+      { key: "confidence", header: "可信度", className: "min-w-[120px]", render: (row) => row.confidence ? <ConfidenceBadge level={row.confidence as ConfidenceLevel} showPrefix /> : <span className="text-textMuted">未评估</span> },
+      {
+        key: "trend",
+        header: "价格趋势",
+        className: "min-w-[116px]",
+        render: (row) => (
+          <button type="button" onClick={() => handleTrend(row)} className="whitespace-nowrap text-xs font-semibold text-primary">
+            查看同口径趋势
+          </button>
+        ),
+      },
+      { key: "riskLevel", header: "风险", className: "min-w-[92px]", render: (row) => <RiskBadge level={row.riskLevel} /> },
+      { key: "quoteDate", header: "报价日期", className: "min-w-[104px]", render: (row) => materialDate(row.quoteDate) ? formatDate(row.quoteDate) : row.quoteDate ? "日期异常" : "未提供" },
+      {
+        key: "actions",
+        header: "操作",
+        align: "right",
+        className: "min-w-[286px]",
+        render: (row) => (
+          <div className="flex flex-nowrap items-center justify-end gap-1" data-no-global-interaction>
+            <Link
+              href={`/material-prices/${row.id}?from=material-prices`}
+              onClick={() => setActiveId(row.id)}
+              className="inline-flex h-8 items-center gap-1 whitespace-nowrap rounded-lg border border-borderSoft bg-white px-2 text-[12px] font-semibold text-slate-600 hover:bg-blue-50 hover:text-primary"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              查看
+            </Link>
+            <Link href={`/material-prices/${row.id}/edit`} onClick={() => setActiveId(row.id)} className="inline-flex h-8 items-center gap-1 whitespace-nowrap rounded-lg border border-borderSoft bg-white px-2 text-[12px] font-semibold text-slate-600 hover:bg-slate-50">
+              <Pencil className="h-3.5 w-3.5" />
+              编辑
+            </Link>
+            <button type="button" onClick={() => router.push(`/ai-price-collection?materialIds=${row.id}&source=material-prices`)} className="inline-flex h-8 items-center gap-1 whitespace-nowrap rounded-lg border border-violet-200 bg-violet-50 px-2 text-[12px] font-semibold text-violet-700 hover:bg-violet-100">
+              <Sparkles className="h-3.5 w-3.5" />
+              采集线索
+            </button>
+            <button type="button" onClick={() => handleTrend(row)} className="inline-flex h-8 items-center gap-1 whitespace-nowrap rounded-lg border border-blue-200 bg-blue-50 px-2 text-[12px] font-semibold text-blue-700 hover:bg-blue-100">
+              <TrendingUp className="h-3.5 w-3.5" />
+              趋势
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [handleTrend, selectedIds, router]
+  );
+
   return (
     <AppLayout>
-      <div className="space-y-3">
+      <div className="space-y-3" data-no-global-interaction>
+        <RouteContextBanner />
         <PageHeader
           title="地材价格库"
-          description="管理项目所在地材料价格、来源、区域、运输条件与 AI 采集线索。"
+          description="管理项目所在地材料价格、来源、区域、有效期与 AI 采集线索。"
           actions={
-            <>
-              <button className="inline-flex h-9 items-center gap-2 rounded-md border border-borderSoft bg-white px-3 text-[13px] font-semibold text-textSecondary shadow-sm transition hover:border-cyan/30 hover:text-cyan">
-                <Upload className="size-4" aria-hidden="true" />
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <Link href="/material-prices/import" className="inline-flex h-9 items-center gap-2 rounded-lg border border-borderSoft bg-white px-4 text-[13px] font-semibold text-slate-600 shadow-sm hover:bg-slate-50">
+                <Upload className="h-4 w-4" />
                 导入价格
-              </button>
-              <button className="inline-flex h-9 items-center gap-2 rounded-md border border-ai-border bg-ai-soft px-3 text-[13px] font-semibold text-ai shadow-sm transition hover:border-ai/40">
-                <SearchCheck className="size-4" aria-hidden="true" />
+              </Link>
+              <button type="button" onClick={handleCollect} className="inline-flex h-9 items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-4 text-[13px] font-semibold text-violet-700 shadow-sm hover:bg-violet-100">
+                <Sparkles className="h-4 w-4" />
                 AI采集
               </button>
-              <Link href="/material-prices/manage" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan/30 bg-cyan-soft px-3 text-[13px] font-semibold text-cyan shadow-sm transition hover:border-cyan/50">
-                <Database className="size-4" aria-hidden="true" />
+              <Link href="/material-prices/reviews" className="inline-flex h-9 items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 text-[13px] font-semibold text-amber-700 shadow-sm hover:bg-amber-100">
+                <SearchCheck className="h-4 w-4" />
+                价格审核
+              </Link>
+              <Link href="/material-prices/manage" className="inline-flex h-9 items-center gap-2 rounded-lg bg-teal-600 px-4 text-[13px] font-semibold text-white shadow-sm hover:bg-teal-700">
+                <Database className="h-4 w-4" />
                 管理价格库
               </Link>
-              <button className="inline-flex h-9 items-center gap-2 rounded-md bg-cyan px-3 text-[13px] font-semibold text-white shadow-sm transition hover:bg-cyan/90">
-                <Plus className="size-4" aria-hidden="true" />
-                新增地材价格
-              </button>
-            </>
+            </div>
           }
         />
 
-        <MaterialKpiGrid />
-        <MaterialFilterPanel />
+        <section className="flex flex-wrap items-center justify-between gap-2 rounded-[8px] border border-borderSoft bg-white px-4 py-2.5 text-[12px] shadow-sm">
+          <span className="text-textSecondary"><strong className="text-textMain">价格库实时联动：</strong>{dataSource === "loading" ? "正在读取 Supabase" : dataSource === "supabase" ? `已加载 ${materialData.length} 条地材价格库记录` : "Supabase 暂不可用，未展示非正式数据"}</span>
+          <Link href="/price-leads?type=地材" className="inline-flex h-7 items-center whitespace-nowrap rounded-md border border-ai/25 bg-ai-soft px-2.5 font-semibold text-ai">待处理地材线索 {materialLeadSummary ? materialLeadSummary.pending + materialLeadSummary.ready : "--"} 条</Link>
+        </section>
 
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,9fr)_minmax(300px,3fr)]">
-          <div className="space-y-3">
-            <MaterialActionBar />
+        <MaterialKpiGrid items={dataSource === "supabase" ? dynamicKpis : dynamicKpis.map(item => ({ ...item, value: "--" }))} activeQuick={quickFilter} onKpiClick={handleKpiClick} />
+
+        <MaterialFilterPanel records={materialData} filters={filters} onChange={patchFilters} onSubmit={submitFilters} onReset={resetFilters} />
+
+        <MaterialActionBar
+          total={filteredRecords.length}
+          selectedCount={selectedIds.length}
+          allVisibleSelected={allVisibleSelected}
+          onToggleVisible={toggleVisible}
+          onCreate={handleCreate}
+          onUpload={() => router.push("/material-prices/import")}
+          onCollect={handleCollect}
+          onAiOrganize={handleAiOrganize}
+          onInquiry={handleInquiry}
+          onExport={exportMaterialPrices}
+          onMore={handleMore}
+          aiOrganizeLoading={aiOrganizing}
+        />
+
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="overflow-hidden rounded-card border border-borderSoft bg-white shadow-card">
+            <ModuleHeader
+              icon={Activity}
+              title="地材价格明细"
+              subtitle="地区、单位、价格趋势和可信度集中管理"
+              action={<AiBadge label="AI采集线索同步" />}
+              className="border-b border-borderSoft px-4 py-3"
+            />
             <DataTable
               columns={columns}
-              data={materialPriceRecords}
-              rowKey="id"
+              data={pagedRecords}
+              rowKey={(row) => row.id}
               density="compact"
-              actions={
-                <ModuleHeader
-                  icon={Activity}
-                  title="地材价格明细"
-                  subtitle="地区、运输条件、价格趋势和可信度集中管理"
-                  tone="cyan"
-                  density="compact"
-                  action={<AiBadge label="AI采集同步" className="h-5 text-[11px]" />}
-                />
-              }
+              onRowClick={(row) => setActiveId(row.id)}
+              rowClassName={(row) => (row.id === activeId ? "bg-blue-50/75 hover:bg-blue-50" : "")}
+              emptyTitle={dataSource === "loading" ? "正在加载价格" : dataSource === "error" ? "价格加载失败" : "暂无匹配的地材价格"}
+              emptyDescription={dataSource === "error" ? "未使用演示数据替代查询结果，请重新加载页面。" : "当前筛选范围暂无价格记录。"}
             />
+            <div className="flex items-center justify-between border-t border-borderSoft px-4 py-3 text-[13px] text-slate-500">
+              <span>
+                共 {filteredRecords.length} 条，当前第 {currentPage} / {pageCount} 页。
+              </span>
+              <div className="flex items-center gap-2">
+                <button type="button" disabled={currentPage <= 1} onClick={() => goToPage(currentPage - 1)} className="grid h-8 w-8 place-items-center rounded-lg border border-borderSoft bg-white disabled:opacity-40">
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                {Array.from({ length: pageCount }).map((_, index) => (
+                  <button
+                    key={index + 1}
+                    type="button"
+                    onClick={() => goToPage(index + 1)}
+                    className={cn("h-8 min-w-8 rounded-lg border px-3 text-[13px] font-semibold", currentPage === index + 1 ? "border-primary bg-primary text-white" : "border-borderSoft bg-white text-slate-600")}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <button type="button" disabled={currentPage >= pageCount} onClick={() => goToPage(currentPage + 1)} className="grid h-8 w-8 place-items-center rounded-lg border border-borderSoft bg-white disabled:opacity-40">
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </div>
-          <CollectionSidePanel />
+
+          {dataSource === "supabase" && <MaterialCollectionSuggestions records={filteredRecords} />}
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-2 2xl:grid-cols-4">
-          <MarketResearchCard />
-          <PriceTrendCard />
-          <RegionCompareCard />
-          <GapWarningCard />
-        </div>
+        {dataSource === "supabase" && <MaterialPriceInsights records={filteredRecords} activeRecord={activeRecord} />}
 
-        <MaterialBottomActions />
+        <MaterialBottomActions
+          onCreate={handleCreate}
+          onUpload={() => router.push("/material-prices/import")}
+          onCollect={handleCollect}
+          onOrganize={handleAiOrganize}
+          onExport={exportMaterialPrices}
+        />
       </div>
     </AppLayout>
   );

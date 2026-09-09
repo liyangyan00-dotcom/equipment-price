@@ -7,6 +7,7 @@ export type TableAction = {
   icon?: LucideIcon;
   tone?: "default" | "primary" | "ai" | "warning";
   href?: string;
+  onClick?: () => void;
 };
 
 type TableActionGroupProps = {
@@ -30,23 +31,23 @@ const iconToneClassName = {
 
 export function TableActionGroup({ actions, className }: TableActionGroupProps) {
   return (
-    <div className={cn("flex justify-end gap-1.5 whitespace-nowrap", className)}>
+    <div className={cn("flex flex-nowrap justify-end gap-1.5 whitespace-nowrap", className)}>
       {actions.map((action) => {
         const Icon = action.icon;
         const className = cn(
-          "inline-flex h-7 shrink-0 items-center gap-1 whitespace-nowrap rounded-md border bg-white px-2 text-[12px] font-medium transition",
+          "relative inline-flex h-7 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md border bg-white px-2 text-[12px] font-medium leading-none transition after:absolute after:-inset-y-2 after:inset-x-0 after:content-['']",
           toneClassName[action.tone ?? "default"]
         );
 
         if (action.href) {
           return (
-            <Link key={action.label} href={action.href} className={className}>
+            <Link key={action.label} href={action.href} className={className} data-no-global-interaction>
               {Icon ? (
-                <span className={cn("flex size-5 shrink-0 items-center justify-center rounded-md ring-1", iconToneClassName[action.tone ?? "default"])}>
+                <span className={cn("pointer-events-none flex size-5 shrink-0 items-center justify-center rounded-md ring-1", iconToneClassName[action.tone ?? "default"])}>
                   <Icon className="size-3.5" aria-hidden="true" />
                 </span>
               ) : null}
-              {action.label}
+              <span className="pointer-events-none whitespace-nowrap">{action.label}</span>
             </Link>
           );
         }
@@ -55,14 +56,16 @@ export function TableActionGroup({ actions, className }: TableActionGroupProps) 
           <button
             key={action.label}
             className={className}
-          type="button"
-        >
+            type="button"
+            data-no-global-interaction
+            onClick={action.onClick}
+          >
             {Icon ? (
-              <span className={cn("flex size-5 shrink-0 items-center justify-center rounded-md ring-1", iconToneClassName[action.tone ?? "default"])}>
+              <span className={cn("pointer-events-none flex size-5 shrink-0 items-center justify-center rounded-md ring-1", iconToneClassName[action.tone ?? "default"])}>
                 <Icon className="size-3.5" aria-hidden="true" />
               </span>
             ) : null}
-            {action.label}
+            <span className="pointer-events-none whitespace-nowrap">{action.label}</span>
           </button>
         );
       })}

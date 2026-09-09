@@ -1,5 +1,8 @@
 import type { ConfidenceLevel, RiskLevel, ReviewStatus } from "@/types/common";
 import { supplierRecords } from "./suppliers";
+import type { SupplierDueDiligence } from "./p0SupplierDueDiligence";
+import type { SupplierWebResearch } from "./p0SupplierResearch";
+import type { SupplierVerificationRecord } from "./supplierVerificationRegistry";
 
 export type SupplierDetail = {
   id: string;
@@ -47,12 +50,32 @@ export type SupplierDetail = {
   projectMatches: { category: string; project: string; reason: string; action: string; match: number }[];
   risks: { type: string; description: string; level: RiskLevel; action: string }[];
   notes: { name: string; type: string; date: string; confidence: ConfidenceLevel }[];
+  webResearch?: SupplierWebResearch;
+  dueDiligence?: SupplierDueDiligence;
+  verification?: SupplierVerificationRecord;
+  importedProfile?: {
+    englishName: string;
+    dataCompleteness: number;
+    importBatch: string;
+    sourceFile: string;
+    sourceSheet: string;
+    sourceRows: number[];
+    bidPackages: string[];
+    equipmentLists: string[];
+    procurementStrategies: string[];
+    strengths: string[];
+    introductions: string[];
+    mainProducts: string[];
+    addresses: string[];
+    contactDetails: string;
+    website: string;
+    notes: string[];
+  };
 };
 
 const base = supplierRecords[0];
 
-export const supplierDetails: SupplierDetail[] = [
-  {
+const fallbackSupplierDetail: SupplierDetail = {
     id: base.id,
     supplierCode: base.supplierCode,
     supplierName: base.supplierName,
@@ -102,9 +125,137 @@ export const supplierDetails: SupplierDetail[] = [
       { name: "营业执照与 ISO 证书.pdf", type: "资质文件", date: "2026-05-12", confidence: "A" },
       { name: "历史合作评价.docx", type: "商务记录", date: "2026-05-18", confidence: "B" },
     ],
-  },
-];
+};
+
+export const supplierDetails: SupplierDetail[] = [];
+
+function normalizeSupplierKey(value: unknown) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function matchesSupplierKey(values: unknown[], key: string) {
+  return values.filter(Boolean).some((value) => normalizeSupplierKey(value) === key);
+}
+
+export function buildSupplierDetailFromRecord(record: (typeof supplierRecords)[number]): SupplierDetail {
+  const fallback = fallbackSupplierDetail;
+  const isImported = Boolean(record.sourceFile);
+  const bidPackages = record.bidPackages ?? [];
+  const strengths = record.strengths ?? [];
+  const procurementStrategies = record.procurementStrategies ?? [];
+  const missingContact = record.contact === "待补全";
+
+  return {
+    ...fallback,
+    id: record.id,
+    supplierCode: record.supplierCode,
+    supplierName: record.supplierName,
+    countryRegion: record.countryRegion,
+    category: record.category,
+    mainScope: record.mainScope,
+    contact: record.contact,
+    whatsapp: record.whatsapp,
+    email: record.email,
+    phone: record.phone ?? fallback.phone,
+    address: record.addresses?.join("\n") || fallback.address,
+    language: record.englishName ? "中文 / 英文" : fallback.language,
+    serviceRegion: bidPackages.length ? `卡南加水厂：${bidPackages.join("、")}` : fallback.serviceRegion,
+    paymentTerms: isImported ? "Excel 未提供，待商务确认" : fallback.paymentTerms,
+    status: record.status,
+    firstRecordedAt: isImported ? "2026-07-23" : fallback.firstRecordedAt,
+    quoteCount: record.quoteCount,
+    lastQuoteAt: record.lastQuoteAt,
+    updatedAt: record.lastQuoteAt,
+    responseSpeed: record.responseSpeed,
+    technicalCapability: record.technicalCapability,
+    deliveryRisk: record.deliveryRisk,
+    overallScore: record.overallScore,
+    confidence: record.confidence,
+    ai: isImported
+      ? {
+          summary: record.aiEvaluation,
+          response: "来源表未提供历史响应时长，首次询价后再形成响应速度评价。",
+          technical: strengths.join("；") || "厂家优势待人工补充。",
+          delivery: procurementStrategies.join("；") || "交付策略待商务团队确认。",
+          stability: "暂无系统历史报价，不能直接判断价格稳定性。",
+          actions: [
+            missingContact ? "补全联系人与直联方式" : "复核联系人信息",
+            "核验卡南加项目供货能力",
+            "人工确认后创建询价任务",
+          ],
+        }
+      : {
+          ...fallback.ai,
+          summary: record.aiEvaluation || fallback.ai.summary,
+        },
+    quoteHistory: isImported
+      ? []
+      : fallback.quoteHistory.map((quote, index) => ({
+          ...quote,
+          quoteCode: `${record.supplierCode}-Q${String(index + 1).padStart(2, "0")}`,
+        })),
+    projectMatches: isImported
+      ? bidPackages.map((bidPackage) => ({
+          category: bidPackage,
+          project: "刚果（金）卡南加水厂",
+          reason: "该供应商由营销阶段采购建议表推荐，仍需人工核验参数、交期与商务条件。",
+          action: "发起预询价",
+          match: Math.max(60, Math.min(95, record.overallScore)),
+        }))
+      : fallback.projectMatches,
+    risks: isImported
+      ? [
+          ...(missingContact
+            ? [{ type: "联系方式", description: "Excel 未提供明确联系人，暂不可直接用于正式询价。", level: "medium" as const, action: "补全资料" }]
+            : []),
+          { type: "人工复核", description: "供应商推荐来自营销阶段采购建议，需核验真实性与当前供货能力。", level: record.riskLevel, action: "人工复核" },
+        ]
+      : fallback.risks,
+    notes: isImported
+      ? [{
+          name: record.sourceFile ?? "卡南加项目采购建议表.xlsx",
+          type: "供应商导入来源",
+          date: "2026-07-23",
+          confidence: record.confidence,
+        }]
+      : fallback.notes,
+    importedProfile: isImported
+      ? {
+          englishName: record.englishName ?? "",
+          dataCompleteness: record.dataCompleteness ?? 0,
+          importBatch: record.importBatch ?? "",
+          sourceFile: record.sourceFile ?? "",
+          sourceSheet: record.sourceSheet ?? "",
+          sourceRows: record.sourceRows ?? [],
+          bidPackages,
+          equipmentLists: record.equipmentLists ?? [],
+          procurementStrategies,
+          strengths,
+          introductions: record.introductions ?? [],
+          mainProducts: record.mainProducts ?? [],
+          addresses: record.addresses ?? [],
+          contactDetails: record.contactDetails ?? "",
+          website: record.website ?? "",
+          notes: record.notes ?? [],
+        }
+      : undefined,
+    webResearch: record.webResearch,
+    dueDiligence: record.dueDiligence,
+    verification: record.verification,
+  };
+}
 
 export function getSupplierDetail(id: string) {
-  return supplierDetails.find((item) => item.id === id) ?? supplierDetails[0];
+  const key = normalizeSupplierKey(decodeURIComponent(id));
+  const explicit = supplierDetails.find((item) =>
+    matchesSupplierKey([item.id, item.supplierCode, item.supplierName], key),
+  );
+
+  if (explicit) return explicit;
+
+  const record = supplierRecords.find((item) =>
+    matchesSupplierKey([item.id, item.supplierCode, item.supplierName], key),
+  );
+
+  return buildSupplierDetailFromRecord(record ?? supplierRecords[0]);
 }

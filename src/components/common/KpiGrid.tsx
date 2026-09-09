@@ -10,6 +10,7 @@ export type KpiGridItem = {
   description?: string;
   icon: LucideIcon;
   tone?: IconBoxTone;
+  onClick?: () => void;
 };
 
 type KpiGridProps = {
@@ -21,7 +22,14 @@ export function KpiGrid({ items, className }: KpiGridProps) {
   return (
     <div className={cn("grid gap-3 sm:grid-cols-2 xl:grid-cols-6", className)}>
       {items.map((item) => (
-        <section key={item.label} className="min-h-[84px] rounded-card border border-borderSoft bg-card px-3 py-2.5 shadow-card">
+        <section
+          key={item.label}
+          onClick={item.onClick}
+          onKeyDown={item.onClick ? (event) => { if (event.key === "Enter" || event.key === " ") item.onClick?.(); } : undefined}
+          role={item.onClick ? "button" : undefined}
+          tabIndex={item.onClick ? 0 : undefined}
+          className={cn("min-h-[84px] rounded-card border border-borderSoft bg-card px-3 py-2.5 shadow-card", item.onClick && "cursor-pointer transition hover:border-primary/35 hover:shadow-cardHover focus:outline-none focus:ring-2 focus:ring-primary/20")}
+        >
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-[12px] font-semibold text-textSecondary">{item.label}</p>

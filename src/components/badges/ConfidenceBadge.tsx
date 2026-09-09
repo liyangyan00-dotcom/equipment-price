@@ -6,10 +6,11 @@ import type { ConfidenceLevel } from "@/types/common";
 type ConfidenceBadgeProps = {
   level: ConfidenceLevel;
   showPrefix?: boolean;
+  label?: string;
   className?: string;
 };
 
-export function ConfidenceBadge({ level, showPrefix = true, className }: ConfidenceBadgeProps) {
+export function ConfidenceBadge({ level, showPrefix = true, label, className }: ConfidenceBadgeProps) {
   return (
     <span
       className={cn(
@@ -19,8 +20,14 @@ export function ConfidenceBadge({ level, showPrefix = true, className }: Confide
       )}
     >
       <ShieldCheck className="size-3.5" aria-hidden="true" />
-      {showPrefix ? `可信度 ${level}` : level}
-      <span className="text-current/75">{confidenceStyles[level].label}</span>
+      {label ? (
+        label
+      ) : (
+        <>
+          {showPrefix ? `可信度 ${level}` : level}
+          <span className="text-current/75">{confidenceStyles[level].label}</span>
+        </>
+      )}
     </span>
   );
 }

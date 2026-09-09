@@ -1,8 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useId } from "react";
 import { AlertCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { OverlayShell } from "./OverlayShell";
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -33,20 +35,24 @@ export function ConfirmDialog({
   onCancel,
   tone = "default",
 }: ConfirmDialogProps) {
-  if (!open) {
-    return null;
-  }
+  const titleId = useId();
+  const descriptionId = useId();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-[440px] rounded-card-lg border border-borderSoft bg-card p-5 shadow-panel">
+    <OverlayShell
+      open={open}
+      onClose={() => onCancel?.()}
+      labelledBy={titleId}
+      describedBy={description ? descriptionId : undefined}
+      panelClassName="max-w-[440px] bg-card p-5"
+    >
         <div className="flex items-start gap-3">
           <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-card", toneClasses[tone])}>
             <AlertCircle className="size-5" aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-section-title text-textMain">{title}</h2>
-            {description ? <p className="mt-1 text-body text-textMuted">{description}</p> : null}
+            <h2 id={titleId} className="text-section-title text-textMain">{title}</h2>
+            {description ? <p id={descriptionId} className="mt-1 text-body text-textMuted">{description}</p> : null}
           </div>
           <button type="button" onClick={onCancel} className="flex size-8 items-center justify-center rounded-sm text-textMuted hover:bg-[var(--color-muted-soft)]" aria-label="关闭">
             <X className="size-4" aria-hidden="true" />
@@ -54,7 +60,7 @@ export function ConfirmDialog({
         </div>
         {children ? <div className="mt-4 text-body text-textSecondary">{children}</div> : null}
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onCancel} className="h-9 rounded-md border border-borderSoft bg-white px-4 text-body-medium text-textSecondary hover:bg-[var(--color-bg-muted)]">
+          <button type="button" onClick={onCancel} data-overlay-autofocus className="h-9 rounded-md border border-borderSoft bg-white px-4 text-body-medium text-textSecondary hover:bg-[var(--color-bg-muted)]">
             {cancelLabel}
           </button>
           <button
@@ -68,7 +74,6 @@ export function ConfirmDialog({
             {confirmLabel}
           </button>
         </div>
-      </div>
-    </div>
+    </OverlayShell>
   );
 }

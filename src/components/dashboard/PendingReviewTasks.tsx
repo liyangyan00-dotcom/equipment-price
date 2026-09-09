@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ClipboardCheck, FileImage, FileSpreadsheet, FileText, Mail } from "lucide-react";
 import { ConfidenceBadge, RiskBadge } from "@/components/badges";
 import { BaseCard } from "@/components/common";
@@ -29,23 +30,27 @@ export function PendingReviewTasks({ data }: PendingReviewTasksProps) {
         <DashboardSectionHeader
           icon={ClipboardCheck}
           title="待复核任务"
-          subtitle="AI识别结果必须进入人工确认流程"
+          subtitle="跨价格、线索、供应商与询价的最新人工待办"
           tone="orange"
-          action={<span className="text-[12px] font-semibold text-primary">更多任务</span>}
+          action={
+            <Link href="/pending-quotes" className="text-[12px] font-semibold text-primary transition hover:text-primary-hover">
+              报价审核
+            </Link>
+          }
         />
       </div>
 
       <div className="divide-y divide-borderSoft">
-        {data.map((task) => {
+        {data.length ? data.map((task) => {
           const Icon = fileIcon[task.fileType];
           return (
-            <div key={task.id} className="grid min-h-[42px] gap-2 px-3 py-1.5 lg:grid-cols-[1.05fr_0.95fr_auto] lg:items-center">
+            <div key={task.id} className="grid min-h-[42px] gap-2 px-3 py-1.5 transition hover:bg-warning-soft/25 lg:grid-cols-[1.05fr_0.95fr_auto] lg:items-center">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-[9px] bg-primary-soft text-primary">
                   <Icon className="size-3.5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-[12px] font-semibold text-textMain">{task.fileName}</p>
+                  <p className="truncate text-[12px] font-semibold text-textMain" title={task.fileName}>{task.fileName}</p>
                   <p className="text-[10.5px] text-textMuted">{taskTypeLabel[task.taskType]}</p>
                 </div>
               </div>
@@ -62,13 +67,13 @@ export function PendingReviewTasks({ data }: PendingReviewTasksProps) {
 
               <div className="flex items-center justify-between gap-2 lg:justify-end">
                 <RiskBadge level={task.riskLevel} />
-                <span className="rounded-pill bg-primary px-2.5 py-1 text-[12px] font-semibold text-white">
+                <Link href={task.href || "/pending-quotes"} className="rounded-md bg-primary px-2.5 py-1 text-[12px] font-semibold text-white transition hover:bg-primary-hover active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/35">
                   {task.actions[1]}
-                </span>
+                </Link>
               </div>
             </div>
           );
-        })}
+        }) : <div className="flex min-h-36 items-center justify-center px-4 text-center text-[12px] text-textMuted">当前没有待人工复核任务</div>}
       </div>
     </BaseCard>
   );

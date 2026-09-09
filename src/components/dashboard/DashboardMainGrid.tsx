@@ -1,21 +1,21 @@
 import type {
   AiInsightCardData,
   AiWorkbenchOverview,
+  BusinessFlowOverview,
   DashboardRiskAlert,
   DistributionAnalysis,
   LatestPriceUpdate,
   PendingReviewTask,
   PriceTrendPoint,
-  QuickAction,
   TrendSummary,
 } from "@/data/mock/dashboard";
 import { DashboardInsightCards } from "./DashboardInsightCards";
 import { AiWorkbenchPanel } from "./AiWorkbenchPanel";
+import { BusinessFlowPanel } from "./BusinessFlowPanel";
 import { DistributionAnalysisGrid } from "./DistributionAnalysisGrid";
 import { LatestPriceFeed } from "./LatestPriceFeed";
 import { PendingReviewTasks } from "./PendingReviewTasks";
 import { PriceTrendIntelligence } from "./PriceTrendIntelligence";
-import { QuickActionBar } from "./QuickActionBar";
 import { RiskDecisionPanel } from "./RiskDecisionPanel";
 
 type DashboardMainGridProps = {
@@ -27,7 +27,11 @@ type DashboardMainGridProps = {
   aiInsightCards: AiInsightCardData[];
   distributionAnalyses: DistributionAnalysis[];
   riskAlerts: DashboardRiskAlert[];
-  quickActions: QuickAction[];
+  businessFlow?: BusinessFlowOverview;
+  rangeDays: 7 | 30 | 90;
+  trendRefreshing?: boolean;
+  onRangeChange: (range: 7 | 30 | 90) => void;
+  onTrendRefresh: () => void;
 };
 
 export function DashboardMainGrid({
@@ -39,27 +43,34 @@ export function DashboardMainGrid({
   aiInsightCards,
   distributionAnalyses,
   riskAlerts,
-  quickActions,
+  businessFlow,
+  rangeDays,
+  trendRefreshing = false,
+  onRangeChange,
+  onTrendRefresh,
 }: DashboardMainGridProps) {
   return (
     <>
-      <section className="grid gap-3 xl:grid-cols-2">
-        <AiWorkbenchPanel data={aiWorkbenchOverview} />
-        <LatestPriceFeed data={latestPriceUpdates} />
-      </section>
+      {businessFlow ? <BusinessFlowPanel data={businessFlow} /> : null}
 
-      <section className="grid gap-3 xl:grid-cols-[1.36fr_0.86fr_0.78fr]">
+      <section id="pending-review" className="scroll-mt-16 grid items-start gap-3 xl:grid-cols-[1.25fr_0.75fr]">
         <PendingReviewTasks data={pendingReviewTasks} />
+        <div id="risk-review" className="scroll-mt-16">
+          <RiskDecisionPanel data={riskAlerts} hideAiSuggestions />
+        </div>
+      </section>
+
+      <section id="latest-updates" className="scroll-mt-16 grid gap-3 xl:grid-cols-2">
+        <LatestPriceFeed data={latestPriceUpdates} />
+        <AiWorkbenchPanel data={aiWorkbenchOverview} />
+      </section>
+
+      <section className="grid items-start gap-3 xl:grid-cols-[0.9fr_1.1fr]">
+        <PriceTrendIntelligence data={priceTrendData} summaries={trendSummaries} rangeDays={rangeDays} refreshing={trendRefreshing} onRangeChange={onRangeChange} onRefresh={onTrendRefresh} compact />
         <DashboardInsightCards data={aiInsightCards} />
-        <PriceTrendIntelligence data={priceTrendData} summaries={trendSummaries} compact />
       </section>
 
-      <section className="grid items-start gap-3 xl:grid-cols-[9fr_3fr]">
-        <DistributionAnalysisGrid data={distributionAnalyses} />
-        <RiskDecisionPanel data={riskAlerts} hideAiSuggestions />
-      </section>
-
-      <QuickActionBar data={quickActions} />
+      <DistributionAnalysisGrid data={distributionAnalyses} />
     </>
   );
 }

@@ -29,7 +29,7 @@ export function AiWorkbenchPanel({ data }: AiWorkbenchPanelProps) {
         }
       />
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2">
         <Metric label="今日AI任务" value={data.todayTaskCount} icon={WandSparkles} tone="ai" />
         <Metric label="识别成功率" value={`${data.recognitionRate}%`} icon={CheckCircle2} tone="success" />
         <Metric label="风险结果" value={data.riskResultCount} icon={AlertTriangle} tone="warning" />

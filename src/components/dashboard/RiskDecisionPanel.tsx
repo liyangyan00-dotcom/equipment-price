@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AlertTriangle, ArrowRight, BrainCircuit } from "lucide-react";
 import { AiBadge, RiskBadge } from "@/components/badges";
 import { BaseCard } from "@/components/common";
@@ -21,8 +22,6 @@ const riskAccent: Record<RiskLevel, string> = {
   critical: "bg-danger",
 };
 
-const compactRiskCounts = [32, 18, 12, 26];
-
 type RiskDecisionPanelProps = {
   data: DashboardRiskAlert[];
   hideAiSuggestions?: boolean;
@@ -41,24 +40,29 @@ export function RiskDecisionPanel({ data, hideAiSuggestions = false }: RiskDecis
         />
 
         <div className="space-y-2">
-          {data.slice(0, 4).map((risk, index) => (
-            <div key={risk.id} className="flex items-center gap-2 rounded-[11px] border border-borderSoft bg-[var(--color-bg-muted)] px-2.5 py-2">
+          {data.slice(0, 4).map((risk) => (
+            <Link key={risk.id} href={risk.href || "/pending-quotes"} className="group flex items-center gap-2 rounded-[11px] border border-borderSoft bg-[var(--color-bg-muted)] px-2.5 py-2 transition hover:border-warning/35 hover:bg-warning-soft/45 focus:outline-none focus-visible:ring-2 focus-visible:ring-warning/30">
               <span className={`size-2.5 shrink-0 rounded-full ${riskAccent[risk.riskLevel]}`} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[12px] font-semibold text-textMain">{risk.title}</p>
                 <p className="truncate text-[10.5px] text-textMuted">{risk.recommendedOperation}</p>
               </div>
-              <span className="shrink-0 text-[12px] font-semibold text-danger">{compactRiskCounts[index]}</span>
-              <span className="shrink-0 text-[10.5px] font-semibold text-textMuted">条</span>
-            </div>
+              <span className="shrink-0 text-[12px] font-semibold tabular-nums text-danger">{risk.count ?? 0}</span>
+              <span className="shrink-0 text-[10.5px] font-semibold text-textMuted">{risk.id === "failed" ? "个" : "条"}</span>
+              <ArrowRight className="size-3.5 shrink-0 text-textMuted transition group-hover:translate-x-0.5 group-hover:text-warning" aria-hidden="true" />
+            </Link>
           ))}
         </div>
 
         <div className="flex justify-center border-t border-borderSoft pt-2">
-          <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary">
+          <Link
+            href="/pending-quotes"
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary transition hover:text-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+            aria-label="查看更多预警与建议"
+          >
             查看更多预警与建议
             <ArrowRight className="size-3.5" aria-hidden="true" />
-          </span>
+          </Link>
         </div>
       </BaseCard>
     );
@@ -99,10 +103,10 @@ export function RiskDecisionPanel({ data, hideAiSuggestions = false }: RiskDecis
               <p className="line-clamp-2 text-[12px] leading-5 text-textSecondary">{risk.suggestedAction}</p>
               <div className="flex items-center justify-between gap-2 md:justify-end">
                 <RiskBadge level={risk.riskLevel} />
-                <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary">
+                <Link href={risk.href || "/pending-quotes"} className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary">
                   {risk.actionLabel}
                   <ArrowRight className="size-3.5" aria-hidden="true" />
-                </span>
+                </Link>
               </div>
             </div>
           ))}

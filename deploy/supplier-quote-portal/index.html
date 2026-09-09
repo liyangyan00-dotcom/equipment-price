@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>供应商在线报价 | Soumission fournisseur</title>
+  <style>
+    :root { color-scheme: light; --ink:#10233f; --muted:#627089; --line:#dce4ef; --page:#f3f6fa; --blue:#0867bd; --blue-soft:#eaf3fc; --green:#15803d; --red:#c73737; --amber:#a16207; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--page); color:var(--ink); font:14px/1.55 Arial,"Microsoft YaHei",sans-serif; letter-spacing:0; }
+    button,input,select,textarea { font:inherit; letter-spacing:0; }
+    .topbar { height:6px; background:var(--blue); }
+    .shell { width:min(1180px,calc(100% - 28px)); margin:26px auto 52px; }
+    .header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:18px; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .mark { display:grid; place-items:center; width:42px; height:42px; border-radius:7px; background:var(--blue); color:white; font-weight:800; }
+    h1 { margin:0; font-size:24px; line-height:1.25; }
+    h2 { margin:0; font-size:16px; }
+    p { margin:0; }
+    .sub { margin-top:3px; color:var(--muted); font-size:12px; }
+    .security { max-width:390px; border-left:3px solid var(--green); padding-left:11px; color:var(--muted); font-size:12px; }
+    .panel { border:1px solid var(--line); border-radius:8px; background:white; box-shadow:0 8px 24px rgba(24,50,84,.07); overflow:hidden; }
+    .summary { display:grid; grid-template-columns:1.4fr 1fr 1fr; border-bottom:1px solid var(--line); }
+    .summary > div { min-width:0; padding:15px 18px; border-right:1px solid var(--line); }
+    .summary > div:last-child { border-right:0; }
+    .label { color:var(--muted); font-size:11px; }
+    .value { margin-top:4px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .notice { margin:16px; padding:11px 13px; border:1px solid #f2d38b; border-radius:6px; background:#fff9e9; color:#75510b; font-size:12px; }
+    .section { padding:18px; border-top:1px solid var(--line); }
+    .section:first-of-type { border-top:0; }
+    .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
+    .badge { border-radius:999px; background:var(--blue-soft); color:var(--blue); padding:3px 9px; font-size:11px; font-weight:700; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    label { display:grid; gap:5px; min-width:0; color:var(--muted); font-size:11px; }
+    input,select,textarea { width:100%; min-width:0; border:1px solid #cfd9e6; border-radius:5px; background:white; color:var(--ink); padding:9px 10px; outline:none; }
+    input,select { height:40px; }
+    textarea { min-height:70px; resize:vertical; }
+    input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(8,103,189,.1); }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:6px; }
+    table { width:100%; min-width:1040px; border-collapse:collapse; }
+    th { position:sticky; top:0; z-index:1; background:#f7f9fc; color:#526177; font-size:11px; text-align:left; }
+    th,td { padding:10px; border-bottom:1px solid var(--line); vertical-align:top; }
+    tr:last-child td { border-bottom:0; }
+    .item-name { font-weight:700; }
+    .item-spec { margin-top:2px; max-width:260px; color:var(--muted); font-size:11px; white-space:normal; }
+    .compact { width:112px; }
+    .wide { width:190px; }
+    .actions { display:flex; align-items:center; justify-content:flex-end; gap:12px; padding:16px 18px; border-top:1px solid var(--line); background:#fafbfd; }
+    .total { margin-right:auto; font-size:12px; color:var(--muted); }
+    .total strong { color:var(--ink); font-size:16px; }
+    button { min-height:40px; border:0; border-radius:5px; padding:0 18px; cursor:pointer; font-weight:700; }
+    button.primary { background:var(--blue); color:white; }
+    button:disabled { cursor:not-allowed; opacity:.5; }
+    .state { padding:54px 24px; text-align:center; }
+    .state strong { display:block; margin-bottom:7px; font-size:18px; }
+    .state.error strong { color:var(--red); }
+    .state.success strong { color:var(--green); }
+    .error-line { margin-top:7px; color:var(--red); font-size:12px; }
+    .hidden { display:none !important; }
+    @media (max-width:760px) {
+      .shell { width:min(100% - 18px,1180px); margin-top:16px; }
+      .header { display:block; }
+      .security { margin-top:14px; }
+      h1 { font-size:20px; }
+      .summary { grid-template-columns:1fr; }
+      .summary > div { border-right:0; border-bottom:1px solid var(--line); }
+      .summary > div:last-child { border-bottom:0; }
+      .grid { grid-template-columns:1fr; }
+      .actions { align-items:stretch; flex-direction:column; }
+      .total { margin-right:0; }
+      button { width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <main class="shell">
+    <header class="header">
+      <div class="brand"><div class="mark">WPI</div><div><h1>供应商在线报价</h1><p class="sub">Soumission de prix en ligne du fournisseur</p></div></div>
+      <p class="security">本页面仅用于指定询价任务。报价提交后将进入人工复核，不会自动形成商务结论。<br>Cette offre sera soumise a une verification humaine.</p>
+    </header>
+    <section class="panel">
+      <div id="loading" class="state"><strong>正在读取询价任务</strong><span>Chargement de la demande de prix...</span></div>
+      <div id="error" class="state error hidden"><strong>无法打开报价任务</strong><span id="errorText">链接无效或已过期。</span></div>
+      <div id="success" class="state success hidden"><strong>报价已成功提交</strong><span>Votre offre a ete soumise avec succes. Vous pouvez fermer cette page.</span></div>
+      <form id="quoteForm" class="hidden">
+        <div class="summary">
+          <div><p class="label">询价主题 / Objet</p><p id="subject" class="value"></p></div>
+          <div><p class="label">询价编号 / Reference</p><p id="code" class="value"></p></div>
+          <div><p class="label">截止时间 / Echeance</p><p id="deadline" class="value"></p></div>
+        </div>
+        <div class="notice">请逐项填写含税或未税单价，并在偏差栏说明税费、运输、付款或技术条件。所有项目必须填写后才能提交。<br>Veuillez renseigner chaque prix unitaire et preciser les conditions fiscales, logistiques, commerciales ou techniques.</div>
+        <section class="section">
+          <div class="section-head"><h2>联系人与报价币种 / Contact et devise</h2><span id="supplier" class="badge"></span></div>
+          <div class="grid">
+            <label>联系人 / Contact<input id="contactName" maxlength="120" autocomplete="name"></label>
+            <label>邮箱 / E-mail<input id="contactEmail" type="email" maxlength="200" autocomplete="email"></label>
+            <label>电话 / Telephone<input id="contactPhone" maxlength="80" autocomplete="tel"></label>
+            <label>统一币种 / Devise<select id="currency" required><option value="CDF">CDF</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="CNY">CNY</option></select></label>
+            <label style="grid-column:span 2">总体备注 / Note generale<textarea id="note" maxlength="4000"></textarea></label>
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h2>逐项报价 / Prix par article</h2><span id="itemCount" class="badge"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>名称与规格<br>Article et specification</th><th>数量<br>Quantite</th><th>单价<br>Prix unitaire</th><th>交期（天）<br>Delai</th><th>有效期（天）<br>Validite</th><th>技术偏差<br>Ecart technique</th><th>商务偏差<br>Ecart commercial</th></tr></thead><tbody id="items"></tbody></table></div>
+          <p id="validationError" class="error-line hidden"></p>
+        </section>
+        <div class="actions"><p class="total">报价合计 / Total: <strong id="total">0 CDF</strong></p><button id="submitButton" class="primary" type="submit">提交报价 / Soumettre</button></div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const endpoint = "https://tkyvafheqyshbjqnzbgq.supabase.co/functions/v1/wpi-supplier-quote-portal";
+    const token = new URLSearchParams(location.search).get("token") || decodeURIComponent(location.pathname.split("/").filter(Boolean).pop() || "");
+    const state = { items: [] };
+    const byId = (id) => document.getElementById(id);
+    const show = (id) => byId(id).classList.remove("hidden");
+    const hide = (id) => byId(id).classList.add("hidden");
+    const post = async (payload) => {
+      const response = await fetch(endpoint, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || `HTTP_${response.status}`);
+      return data.data;
+    };
+    const errorMessage = (code) => ({
+      INVALID_PORTAL_TOKEN:"报价链接格式无效。",
+      PORTAL_TOKEN_NOT_FOUND:"报价链接不存在。",
+      PORTAL_TOKEN_REVOKED:"报价链接已被撤销。",
+      PORTAL_TOKEN_EXPIRED:"报价链接已过期。",
+      PORTAL_ALREADY_SUBMITTED:"该报价已经提交，不能重复提交。",
+      SUPPLIER_NOT_APPROVED:"供应商尚未通过准入复核。"
+    }[code] || `系统暂时无法处理：${code}`);
+    const input = (className, type, value) => { const node=document.createElement("input"); node.className=className; node.type=type; if(value!=null) node.value=value; return node; };
+    const renderItems = (items, quotes) => {
+      const quoteMap = new Map((quotes || []).map((q) => [q.inquiry_item_id,q]));
+      const body = byId("items"); body.replaceChildren(); state.items=[];
+      items.forEach((item) => {
+        const quote=quoteMap.get(item.id)||{}; const row=document.createElement("tr");
+        const detail=document.createElement("td"); const name=document.createElement("div"); name.className="item-name"; name.textContent=item.item_name || "-";
+        const spec=document.createElement("div"); spec.className="item-spec"; spec.textContent=item.specification || "无规格 / Sans specification"; detail.append(name,spec);
+        const quantity=document.createElement("td"); quantity.textContent=`${Number(item.quantity||0)} ${item.unit||""}`;
+        const priceCell=document.createElement("td"); const price=input("compact","number",quote.unit_price); price.min="0"; price.step="0.0001"; price.required=true; priceCell.append(price);
+        const deliveryCell=document.createElement("td"); const delivery=input("compact","number",quote.delivery_days); delivery.min="0"; delivery.step="1"; deliveryCell.append(delivery);
+        const validityCell=document.createElement("td"); const validity=input("compact","number",quote.validity_days); validity.min="0"; validity.step="1"; validityCell.append(validity);
+        const technicalCell=document.createElement("td"); const technical=document.createElement("textarea"); technical.className="wide"; technical.maxLength=4000; technical.value=quote.technical_deviation||""; technicalCell.append(technical);
+        const commercialCell=document.createElement("td"); const commercial=document.createElement("textarea"); commercial.className="wide"; commercial.maxLength=4000; commercial.value=quote.commercial_deviation||""; commercialCell.append(commercial);
+        row.append(detail,quantity,priceCell,deliveryCell,validityCell,technicalCell,commercialCell); body.append(row);
+        const model={item,price,delivery,validity,technical,commercial}; state.items.push(model); price.addEventListener("input",updateTotal);
+      });
+      byId("itemCount").textContent=`${items.length} 项 / articles`;
+    };
+    const updateTotal = () => {
+      const total=state.items.reduce((sum,row)=>sum+(Number(row.price.value)||0)*(Number(row.item.quantity)||0),0);
+      byId("total").textContent=`${total.toLocaleString("fr-FR",{maximumFractionDigits:4})} ${byId("currency").value}`;
+    };
+    const load = async () => {
+      try {
+        if(token.length<32) throw new Error("INVALID_PORTAL_TOKEN");
+        const data=await post({action:"load",token});
+        byId("subject").textContent=data.inquiry?.subject||"-"; byId("code").textContent=data.inquiry?.inquiry_code||"-";
+        byId("deadline").textContent=data.inquiry?.deadline?new Date(data.inquiry.deadline).toLocaleString("zh-CN") : "-";
+        byId("supplier").textContent=data.supplier?.name||"供应商"; renderItems(data.items||[],data.quotes||[]);
+        const existing=(data.quotes||[])[0]; if(existing?.currency) byId("currency").value=existing.currency;
+        updateTotal(); hide("loading"); show("quoteForm");
+      } catch(error) { hide("loading"); byId("errorText").textContent=errorMessage(error.message); show("error"); }
+    };
+    byId("currency").addEventListener("change",updateTotal);
+    byId("quoteForm").addEventListener("submit",async(event)=>{
+      event.preventDefault(); const invalid=state.items.find((row)=>row.price.value===""||Number(row.price.value)<0);
+      if(invalid){byId("validationError").textContent="请填写所有项目的有效单价 / Veuillez renseigner tous les prix unitaires.";show("validationError");invalid.price.focus();return;}
+      hide("validationError"); const button=byId("submitButton"); button.disabled=true; button.textContent="正在提交 / Envoi...";
+      try {
+        await post({action:"submit",token,contactName:byId("contactName").value,contactEmail:byId("contactEmail").value,contactPhone:byId("contactPhone").value,note:byId("note").value,items:state.items.map((row)=>({inquiryItemId:row.item.id,unitPrice:Number(row.price.value),currency:byId("currency").value,deliveryDays:row.delivery.value===""?null:Number(row.delivery.value),validityDays:row.validity.value===""?null:Number(row.validity.value),technicalDeviation:row.technical.value,commercialDeviation:row.commercial.value}))});
+        hide("quoteForm"); show("success");
+      } catch(error) { byId("validationError").textContent=errorMessage(error.message); show("validationError"); button.disabled=false; button.textContent="提交报价 / Soumettre"; }
+    });
+    load();
+  </script>
+</body>
+</html>

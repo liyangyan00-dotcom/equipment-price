@@ -10,8 +10,11 @@ type DataTableProps<TData extends Record<string, unknown>> = {
   emptyTitle?: string;
   emptyDescription?: string;
   actions?: ReactNode;
+  footer?: ReactNode;
   className?: string;
   density?: "default" | "compact";
+  onRowClick?: (row: TData, rowIndex: number) => void;
+  rowClassName?: (row: TData, rowIndex: number) => string;
 };
 
 function getCellValue<TData extends Record<string, unknown>>(row: TData, key: keyof TData | string) {
@@ -25,8 +28,11 @@ export function DataTable<TData extends Record<string, unknown>>({
   emptyTitle = "暂无数据",
   emptyDescription = "当前筛选条件下没有可展示的数据。",
   actions,
+  footer,
   className,
   density = "default",
+  onRowClick,
+  rowClassName,
 }: DataTableProps<TData>) {
   const getRowKey =
     typeof rowKey === "function" ? rowKey : (row: TData) => String(row[rowKey] ?? "");
@@ -59,13 +65,16 @@ export function DataTable<TData extends Record<string, unknown>>({
             </thead>
             <tbody>
               {data.map((row, rowIndex) => (
-                <tr
-                  key={getRowKey(row, rowIndex)}
-                  className={cn(
-                    "border-b border-borderSoft transition last:border-0 hover:bg-[var(--color-muted-soft)]",
-                    density === "compact" ? "h-10" : "h-[52px]"
-                  )}
-                >
+            <tr
+              key={getRowKey(row, rowIndex)}
+              onClick={onRowClick ? () => onRowClick(row, rowIndex) : undefined}
+              className={cn(
+                "border-b border-borderSoft transition last:border-0 hover:bg-[var(--color-muted-soft)]",
+                density === "compact" ? "h-10" : "h-[52px]",
+                onRowClick && "cursor-pointer",
+                rowClassName?.(row, rowIndex)
+              )}
+            >
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
@@ -86,6 +95,7 @@ export function DataTable<TData extends Record<string, unknown>>({
           </table>
         </div>
       )}
+      {footer ? <div className="border-t border-borderSoft bg-white px-3 py-2.5">{footer}</div> : null}
     </div>
   );
 }

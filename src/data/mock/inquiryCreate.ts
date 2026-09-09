@@ -32,7 +32,7 @@ export type InquirySupplierCandidate = Record<string, unknown> & {
 export const inquiryCreateSteps = [
   { label: "选择询价对象", description: "选择设备/材料及规格", status: "done" },
   { label: "选择供应商", description: "选择合适的供应商", status: "done" },
-  { label: "AI 生成询价函", description: "智能生成询价内容", status: "active" },
+  { label: "生成初版询价函", description: "随任务创建初版草稿", status: "active" },
   { label: "预览并创建任务", description: "确认并创建询价任务", status: "pending" },
 ] as const;
 

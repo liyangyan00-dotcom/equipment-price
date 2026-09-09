@@ -1,0 +1,5 @@
+{
+  "service": "wpi-supplier-quote-portal",
+  "public": true,
+  "version": 1
+}

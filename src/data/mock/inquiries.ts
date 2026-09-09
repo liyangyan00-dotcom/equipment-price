@@ -3,6 +3,7 @@ import type { AiTaskStatus, CurrencyCode, RiskLevel } from "@/types/common";
 export type InquiryTaskRecord = Record<string, unknown> & {
   id: string;
   inquiryCode: string;
+  comparisonId: string;
   subject: string;
   relatedItem: string;
   supplierCount: number;
@@ -33,6 +34,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-001",
     inquiryCode: "INQ-202506-001",
+    comparisonId: "CMP-202506-001",
     subject: "取水泵采购询价",
     relatedItem: "立式轴流泵 1200kW",
     supplierCount: 12,
@@ -52,6 +54,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-002",
     inquiryCode: "INQ-202506-002",
+    comparisonId: "CMP-202506-002",
     subject: "PAC加药系统设备",
     relatedItem: "PAC加药装置",
     supplierCount: 8,
@@ -71,6 +74,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-003",
     inquiryCode: "INQ-202506-003",
+    comparisonId: "CMP-202506-003",
     subject: "紫外消毒系统采购",
     relatedItem: "紫外消毒器 300m³/h",
     supplierCount: 10,
@@ -90,6 +94,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-004",
     inquiryCode: "INQ-202506-004",
+    comparisonId: "CMP-202506-004",
     subject: "阀门与管件采购",
     relatedItem: "DN300蝶阀",
     supplierCount: 15,
@@ -109,6 +114,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-005",
     inquiryCode: "INQ-202506-005",
+    comparisonId: "CMP-202506-005",
     subject: "絮凝剂（PAM）采购",
     relatedItem: "PAM阳离子 25kg/袋",
     supplierCount: 6,
@@ -128,6 +134,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-006",
     inquiryCode: "INQ-202506-006",
+    comparisonId: "CMP-202506-006",
     subject: "低压配电柜采购",
     relatedItem: "低压配电柜 400A",
     supplierCount: 9,
@@ -147,6 +154,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-007",
     inquiryCode: "INQ-202506-007",
+    comparisonId: "CMP-202506-007",
     subject: "活性炭滤料采购",
     relatedItem: "活性炭滤料 10-24目",
     supplierCount: 7,
@@ -166,6 +174,7 @@ export const inquiryTaskRecords: InquiryTaskRecord[] = [
   {
     id: "INQ-008",
     inquiryCode: "INQ-202506-008",
+    comparisonId: "CMP-202506-008",
     subject: "加压泵站设备一批",
     relatedItem: "卧式离心泵 75kW",
     supplierCount: 11,

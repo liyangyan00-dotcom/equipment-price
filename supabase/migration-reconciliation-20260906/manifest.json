@@ -1,0 +1,1077 @@
+{
+  "project": "tkyvafheqyshbjqnzbgq",
+  "capturedAt": "2026-09-06",
+  "normalization": "remove CR; trim spaces, LF, TAB and semicolons at both ends; MD5 UTF-8 (integrity comparison only)",
+  "remote": [
+    {
+      "version": "20260726154815",
+      "name": "wpi_isolated_core_auth_rbac_audit_storage",
+      "hash": "01ef4196706f6bb95aff45d4242138a3"
+    },
+    {
+      "version": "20260726170110",
+      "name": "add_business_legacy_ids",
+      "hash": "4905522a7e23614b39bf37624e04133e"
+    },
+    {
+      "version": "20260726174655",
+      "name": "add_price_inquiry_import_fields",
+      "hash": "e8553a285650be1a39006550ae08ca28"
+    },
+    {
+      "version": "20260726180037",
+      "name": "add_price_inquiry_indexes",
+      "hash": "bd366ea7001af67232f145d83c77ae66"
+    },
+    {
+      "version": "20260726180259",
+      "name": "optimize_price_inquiry_insert_policies",
+      "hash": "2817493e0e56785d5d2b7bf029f8b828"
+    },
+    {
+      "version": "20260729162701",
+      "name": "add_equipment_price_review_center",
+      "hash": "b0740425bfbc8f1fe23f088638711e9a"
+    },
+    {
+      "version": "20260729164141",
+      "name": "refine_equipment_review_evidence",
+      "hash": "48ec95f40b53de347dee5f775273ad52"
+    },
+    {
+      "version": "20260729164359",
+      "name": "optimize_equipment_review_security_indexes",
+      "hash": "66040d07633709251051067381ed91ff"
+    },
+    {
+      "version": "20260729170622",
+      "name": "add_equipment_price_import_center",
+      "hash": "4bef1cb15fd6bfc3c44ff3868bbd55f9"
+    },
+    {
+      "version": "20260729170714",
+      "name": "refine_equipment_import_rls",
+      "hash": "e490785d4b67d1cc08487b6e0e388af6"
+    },
+    {
+      "version": "20260729184310",
+      "name": "allow_price_writers_submit_reviews",
+      "hash": "0b46819833be73c4614c8c5fa90ffd2e"
+    },
+    {
+      "version": "20260812212337",
+      "name": "add_equipment_price_soft_delete",
+      "hash": "4ebf2b0973d3da479665f8c0c84461fe"
+    },
+    {
+      "version": "20260812215109",
+      "name": "index_equipment_price_soft_delete_actor",
+      "hash": "c50966957f0fa9bb29bd0aba69544dcd"
+    },
+    {
+      "version": "20260812222221",
+      "name": "equipment_import_review_workflow",
+      "hash": "66ffa5c021110c62ceda6cb4ba935532"
+    },
+    {
+      "version": "20260812223331",
+      "name": "repair_equipment_import_storage_metadata",
+      "hash": "49c006c56a858275d887fcece803ad1e"
+    },
+    {
+      "version": "20260812230943",
+      "name": "guard_equipment_review_terminal_state",
+      "hash": "118b2694f623ca5bc2a248c3a1b4bbc3"
+    },
+    {
+      "version": "20260812235729",
+      "name": "harden_equipment_price_review_workflow",
+      "hash": "37f0e9050dcf7a4ad9aae5d8e2af46ac"
+    },
+    {
+      "version": "20260813002036",
+      "name": "make_equipment_import_draft_atomic",
+      "hash": "c8ce61b53f7e68ff9d3d9709d4c9eb1b"
+    },
+    {
+      "version": "20260813091840",
+      "name": "make_equipment_review_submission_atomic",
+      "hash": "57c0d7bcfb8c7be771a97338a293e56f"
+    },
+    {
+      "version": "20260813092313",
+      "name": "restrict_direct_equipment_review_rpc",
+      "hash": "f0c59c654b5712f62f53195feacf28b2"
+    },
+    {
+      "version": "20260813093501",
+      "name": "harden_equipment_price_review_p0_flow",
+      "hash": "45dbc06398e97df53af97b65a06da09a"
+    },
+    {
+      "version": "20260813093553",
+      "name": "protect_finalized_equipment_price_core_fields",
+      "hash": "9f6998890ea41017044394aa8971b02a"
+    },
+    {
+      "version": "20260813093725",
+      "name": "fix_equipment_review_queue_payload_columns",
+      "hash": "9586800be8ab798a1a09bdb5e123b6ee"
+    },
+    {
+      "version": "20260813094946",
+      "name": "harden_equipment_evidence_chain_p1",
+      "hash": "137143427f6abb7e3127e9e97d1699a8"
+    },
+    {
+      "version": "20260813100524",
+      "name": "optimize_attachment_actor_lookup_p1",
+      "hash": "0532a82fc36d7beabb3b66ed8f9f5c58"
+    },
+    {
+      "version": "20260813110600",
+      "name": "enforce_equipment_review_rbac_audit_p1",
+      "hash": "14a18fffadd2e985576aefa46c40e50f"
+    },
+    {
+      "version": "20260813113559",
+      "name": "prepare_equipment_review_ai_capability_p1",
+      "hash": "b366f8fe24b08133575f81acfe8219ef"
+    },
+    {
+      "version": "20260813114111",
+      "name": "index_equipment_ai_review_run_foreign_keys",
+      "hash": "2a218b61517532fd8fdb4537a60e4a69"
+    },
+    {
+      "version": "20260813142337",
+      "name": "add_price_collection_business_p2",
+      "hash": "22ddcb6759ceedd8f9a9c6f39daaf168"
+    },
+    {
+      "version": "20260813142552",
+      "name": "optimize_price_collection_p2",
+      "hash": "b8c97e03c6d6e4108187c21a2667aa23"
+    },
+    {
+      "version": "20260820170917",
+      "name": "add_organization_role_permission_overrides",
+      "hash": "e9d606d37ca6f11fd8388e9ae1e979af"
+    },
+    {
+      "version": "20260820172801",
+      "name": "optimize_organization_role_permission_policies",
+      "hash": "e345d1586a987a0267484c9231277d23"
+    },
+    {
+      "version": "20260820201005",
+      "name": "attachment_evidence_detail_backend",
+      "hash": "897f4151e62d05e0436c0cc5a2bbb2a8"
+    },
+    {
+      "version": "20260820203044",
+      "name": "optimize_attachment_evidence_foreign_keys",
+      "hash": "453c7a28c42cb9019d96d2364b4d82a8"
+    },
+    {
+      "version": "20260820205235",
+      "name": "add_dictionary_governance",
+      "hash": "5b9c76e6a32b3831302e15ee5180cef0"
+    },
+    {
+      "version": "20260820210301",
+      "name": "optimize_dictionary_foreign_keys",
+      "hash": "9f9af851a724eb2f21cfbb13c1cd096b"
+    },
+    {
+      "version": "20260820213005",
+      "name": "add_external_integration_management",
+      "hash": "93c3c647a9793ab99daef91d86442481"
+    },
+    {
+      "version": "20260820214803",
+      "name": "harden_external_integration_insert_grants",
+      "hash": "92ec50236e8b2d453d965aeaa9b3e7fe"
+    },
+    {
+      "version": "20260820215411",
+      "name": "invalidate_integration_validation_on_config_change",
+      "hash": "580c913133e07e6b9353437d8612303e"
+    },
+    {
+      "version": "20260820215736",
+      "name": "enforce_external_integration_column_grants",
+      "hash": "e7f8894912843933c541546139e764ee"
+    },
+    {
+      "version": "20260820222658",
+      "name": "add_ai_audit_log_reader",
+      "hash": "954906ad2786b58b4450913a48734095"
+    },
+    {
+      "version": "20260820230341",
+      "name": "harden_ai_audit_reader_security_invoker",
+      "hash": "7585571b2e61b45daf995da4dca1caca"
+    },
+    {
+      "version": "20260820233928",
+      "name": "persist_ai_settings_p0",
+      "hash": "befa7a9e34863a2d0cf8621a64a82b88"
+    },
+    {
+      "version": "20260820235415",
+      "name": "harden_ai_settings_persistence",
+      "hash": "79064a83ee3a2385c6ac55d2916a48ee"
+    },
+    {
+      "version": "20260821063415",
+      "name": "add_ai_execution_gateway_p1",
+      "hash": "7e2848d93b97d0e553017fb2aa89803e"
+    },
+    {
+      "version": "20260821063814",
+      "name": "index_ai_gateway_integration_p1",
+      "hash": "111eea415d0a6c2d0c8aed5aac1309a3"
+    },
+    {
+      "version": "20260821072052",
+      "name": "global_topbar_real_p0",
+      "hash": "1447cec54af6a3ee2003220b8c657cac"
+    },
+    {
+      "version": "20260821073655",
+      "name": "index_topbar_notification_creator",
+      "hash": "1e042bd9b0edeabae20a20491b6e5f23"
+    },
+    {
+      "version": "20260821074507",
+      "name": "index_topbar_preference_user",
+      "hash": "36a5561bfb1c0ac2d106deb3e682af0d"
+    },
+    {
+      "version": "20260821083803",
+      "name": "add_persisted_ai_task_orchestration_p1",
+      "hash": "2ac9ecc77c9af348060f6305aae3f12b"
+    },
+    {
+      "version": "20260821090704",
+      "name": "add_deepseek_ai_provider",
+      "hash": "0041d16565635f2b74e24e18117d2e26"
+    },
+    {
+      "version": "20260821093316",
+      "name": "fix_integration_credential_hint_ambiguity",
+      "hash": "3b4b6573be1fe293c009a8b1f21496cf"
+    },
+    {
+      "version": "20260821111410",
+      "name": "quote_recognition_pending_review_p0",
+      "hash": "d0d2116d7e86ae3f5ad48096eca72f56"
+    },
+    {
+      "version": "20260821114611",
+      "name": "allow_quote_recognition_csv_storage",
+      "hash": "86dbb53a6f38cc617c7b3c0f3681c6dc"
+    },
+    {
+      "version": "20260821123517",
+      "name": "quote_review_evidence_audit_p1",
+      "hash": "8c498a40c5fb5a47a2898235db112be4"
+    },
+    {
+      "version": "20260821140927",
+      "name": "quote_document_line_evidence_p2",
+      "hash": "c956f543aa94f0adbec4de2ae944422f"
+    },
+    {
+      "version": "20260821141606",
+      "name": "quote_evidence_created_by_index",
+      "hash": "7009e0cf369239f54cd5cc1d8304853f"
+    },
+    {
+      "version": "20260821142237",
+      "name": "allow_quote_recognition_webp_storage",
+      "hash": "65d970ae9fbe10673f8d92a6f0fca970"
+    },
+    {
+      "version": "20260821152433",
+      "name": "unify_price_collection_pipeline",
+      "hash": "ba8be6e4fec51a3e4ee2b7ce51a10380"
+    },
+    {
+      "version": "20260821160152",
+      "name": "schedule_price_collection",
+      "hash": "571591b41807dc0fa26cb88ecf7bde2e"
+    },
+    {
+      "version": "20260821161252",
+      "name": "fix_collection_currency_conversion",
+      "hash": "86241ef2498973843d6ba8ac7b3416d7"
+    },
+    {
+      "version": "20260821163538",
+      "name": "deactivate_collection_test_source",
+      "hash": "bb11b7ba2b02d27ab4ffbcf53f6dd3e7"
+    },
+    {
+      "version": "20260821165636",
+      "name": "optimize_price_collection_pipeline",
+      "hash": "f2cd82b0117190e0562494a3e6f9bbb0"
+    },
+    {
+      "version": "20260821165848",
+      "name": "optimize_collection_lead_rls",
+      "hash": "f1b45e256bf94bd61ca020e5fe1408eb"
+    },
+    {
+      "version": "20260821211448",
+      "name": "make_collection_lead_transfer_atomic",
+      "hash": "c50db20b0d1236aca77263807551940c"
+    },
+    {
+      "version": "20260821230001",
+      "name": "price_leads_p2_evidence_matching_assignment",
+      "hash": "2c052ce4151acaad83d5c332007e8feb"
+    },
+    {
+      "version": "20260821232113",
+      "name": "price_leads_p2_index_fix",
+      "hash": "f7651223998b9caa66a9ab3e11064cab"
+    },
+    {
+      "version": "20260821233458",
+      "name": "fix_price_reviewer_user_id_ambiguity",
+      "hash": "63c781c32a69b34e9830503ca9c11eb6"
+    },
+    {
+      "version": "20260822002744",
+      "name": "add_inquiry_letter_versions_p1",
+      "hash": "0fc78af64e846f2eeec0ec21331912c3"
+    },
+    {
+      "version": "20260822004637",
+      "name": "optimize_inquiry_letter_versions_p1",
+      "hash": "7f26dfbd8177eb19957938517c146e82"
+    },
+    {
+      "version": "20260822120729",
+      "name": "inquiry_letter_business_p2",
+      "hash": "6f2b8855c4ae106e3b1bd8ecef6c107c"
+    },
+    {
+      "version": "20260822122018",
+      "name": "inquiry_letter_business_p2_advisor_fixes",
+      "hash": "2551a1e2d400f8814966c88f80d454e3"
+    },
+    {
+      "version": "20260822164921",
+      "name": "inquiry_delivery_comparison_realtime",
+      "hash": "c02c482859aa7a8c06425be9e16eabec"
+    },
+    {
+      "version": "20260822165636",
+      "name": "inquiry_email_runtime_gateway",
+      "hash": "86407b55cb3fef9143342fb79cf2172c"
+    },
+    {
+      "version": "20260822174311",
+      "name": "inquiry_comparison_covering_indexes",
+      "hash": "f387081796dfd223415c463b792b1b49"
+    },
+    {
+      "version": "20260822180419",
+      "name": "supplier_quote_portal_fx_reminder_inbound",
+      "hash": "0989cd385377e356d264c44dd82b3efe"
+    },
+    {
+      "version": "20260822202317",
+      "name": "inquiry_runtime_completion",
+      "hash": "9e0de6409752bea09a22f9a315f3313a"
+    },
+    {
+      "version": "20260822205358",
+      "name": "prepare_resend_inquiry_email",
+      "hash": "7db0f14b283ef8df62e0c299bc016746"
+    },
+    {
+      "version": "20260822235258",
+      "name": "add_project_pricing_business_p0",
+      "hash": "edfc0d0d2edd567c24619858f4261a8e"
+    },
+    {
+      "version": "20260823093941",
+      "name": "add_equipment_catalog_p0",
+      "hash": "ae2bebbbdea76d1beed20808e91723a2"
+    },
+    {
+      "version": "20260823103528",
+      "name": "add_boq_equipment_catalog_matching_p1",
+      "hash": "96ec7b90720e97e38068630155bc9821"
+    },
+    {
+      "version": "20260823120836",
+      "name": "backfill_equipment_catalog_types",
+      "hash": "02f21198a466d00dab46ff825731af72"
+    },
+    {
+      "version": "20260823164145",
+      "name": "equipment_collection_shared_methods_runs_imports_queue",
+      "hash": "218996e7d5f61df7e68fd13a9bb4f5a5"
+    },
+    {
+      "version": "20260823213949",
+      "name": "equipment_catalog_discovery_and_supplier_api_credentials",
+      "hash": "ea52b213f5dbe48305db5c59a8428f94"
+    },
+    {
+      "version": "20260823220858",
+      "name": "enable_ksb_official_discovery",
+      "hash": "28521173c1697dd07a098e42ee635ded"
+    },
+    {
+      "version": "20260823222942",
+      "name": "refine_ksb_product_catalog_source",
+      "hash": "c6ccdf2a269bf283cd262c9a65b7853d"
+    },
+    {
+      "version": "20260823231945",
+      "name": "equipment_catalog_collection_candidates",
+      "hash": "8370ee45e550f9549a33471d53b4ace6"
+    },
+    {
+      "version": "20260823233543",
+      "name": "requeue_unstructured_equipment_products",
+      "hash": "1e104d54865d50ec35360ee410c0c078"
+    },
+    {
+      "version": "20260824023428",
+      "name": "equipment_catalog_pdf_parameter_review",
+      "hash": "ef879a025bcc55c513b68ddd532e9303"
+    },
+    {
+      "version": "20260824030547",
+      "name": "equipment_catalog_parameter_candidate_review_rpc",
+      "hash": "0d5542620a80fe08167db6e40627bea9"
+    },
+    {
+      "version": "20260824152126",
+      "name": "equipment_catalog_review_queue",
+      "hash": "996c73d49e9508a38c1bf750208b013a"
+    },
+    {
+      "version": "20260824183500",
+      "name": "equipment_manufacturer_master",
+      "hash": "c7865dc015a9ceaf99a7ba10cb32e4d1"
+    },
+    {
+      "version": "20260824220056",
+      "name": "fix_equipment_collection_runtime_accuracy",
+      "hash": "c03be8b3eb9e4fca7b64e6da49cf9e2f"
+    },
+    {
+      "version": "20260824220911",
+      "name": "prioritize_equipment_document_discovery",
+      "hash": "e246bcedc5cffbff60863abd740cacbd"
+    },
+    {
+      "version": "20260824221950",
+      "name": "extract_equipment_html_technical_parameters",
+      "hash": "87db384f621499a18f79fa685d999a12"
+    },
+    {
+      "version": "20260824223208",
+      "name": "requeue_unparsed_equipment_technical_pages",
+      "hash": "e47c28002f35ae4e034f01430a50be7d"
+    },
+    {
+      "version": "20260824225000",
+      "name": "mark_authenticated_downloads_blocked",
+      "hash": "e8a0f44aaf17b9b29d69f18452e6e253"
+    },
+    {
+      "version": "20260824225800",
+      "name": "requeue_equipment_download_indexes",
+      "hash": "982586af0468a490200d8c5329e1190f"
+    },
+    {
+      "version": "20260824230800",
+      "name": "requeue_download_indexes_for_document_binding",
+      "hash": "1a3c0b2a283fded461f0f17907b8e1c7"
+    },
+    {
+      "version": "20260825093000",
+      "name": "resume_batched_equipment_collection",
+      "hash": "807f705a7c4ded5ce3e4c6e16a43cf3e"
+    },
+    {
+      "version": "20260825122940",
+      "name": "extend_ai_gateway_run_actions",
+      "hash": "9bd77b6bcfbca70495cda902e9a1ec6a"
+    },
+    {
+      "version": "20260825134001",
+      "name": "fix_equipment_parameter_review_provenance",
+      "hash": "77491165ea5ea2fdddda4c1b29d72125"
+    },
+    {
+      "version": "20260825192747",
+      "name": "add_collection_task_delete_policy",
+      "hash": "d6d48956bc24ff85630d83228a47179d"
+    },
+    {
+      "version": "20260825225714",
+      "name": "add_price_collection_task_scope_and_confidence_filters",
+      "hash": "206b501934caa145f331680cc4adaa17"
+    },
+    {
+      "version": "20260825233935",
+      "name": "seed_congo_material_price_sources",
+      "hash": "a6268c010420a16589b88c7baa7d171a"
+    },
+    {
+      "version": "20260826004442",
+      "name": "scope_collection_discoveries_by_task",
+      "hash": "808779c2aa4a11834d375c44af2d5a08"
+    },
+    {
+      "version": "20260826004747",
+      "name": "scope_price_evidence_by_task",
+      "hash": "69a28bbaf2dabf7e4f742fc31d869608"
+    },
+    {
+      "version": "20260826012815",
+      "name": "fix_collection_lead_similarity_rounding",
+      "hash": "26a1dd9f86bd9ca2928386ad142f2e62"
+    },
+    {
+      "version": "20260826020604",
+      "name": "source_level_price_collection_runs",
+      "hash": "2d7770f0d632f67bd0746d80f378d934"
+    },
+    {
+      "version": "20260826020859",
+      "name": "configure_deepseek_price_name_translation",
+      "hash": "38c67f04b37ee9b67b5406849f6cfe2a"
+    },
+    {
+      "version": "20260826021505",
+      "name": "prepare_price_lead_translation_state",
+      "hash": "5aea715b547e073be2aa80cd95a74eb1"
+    },
+    {
+      "version": "20260826021620",
+      "name": "enforce_one_concurrent_source_per_host",
+      "hash": "a9c5ed47e3df11083ccc0fdc3fa08345"
+    },
+    {
+      "version": "20260826085003",
+      "name": "price_collection_validity_p0",
+      "hash": "6aaf31edc3387f21dd4e1c625894ab41"
+    },
+    {
+      "version": "20260826091716",
+      "name": "price_detail_page_admission_p0",
+      "hash": "41939d8a3cabef74ef0da28cfd98b42f"
+    },
+    {
+      "version": "20260826194141",
+      "name": "replace_material_price_sources_with_p0",
+      "hash": "590544f72006e077b0da9e9e2152a3d2"
+    },
+    {
+      "version": "20260826202953",
+      "name": "add_price_collection_lead_delete_policy",
+      "hash": "f0b5e91c6edb4b51e32b8e2489f20b59"
+    },
+    {
+      "version": "20260826211526",
+      "name": "align_p0_source_validation_state",
+      "hash": "22dc3115d9b66be5e80d1b4bb8a80af1"
+    },
+    {
+      "version": "20260827150051",
+      "name": "recover_stale_price_source_runs",
+      "hash": "1f9d9b0f437ffacc63bd2ab272062696"
+    },
+    {
+      "version": "20260827161111",
+      "name": "add_price_collection_quote_date",
+      "hash": "b67bbe5a395479fe44438fd3c40f43d3"
+    },
+    {
+      "version": "20260827230714",
+      "name": "reconcile_stale_price_collection_runs",
+      "hash": "f8ad6fd32dc8b30ee16e2f2cb723488e"
+    },
+    {
+      "version": "20260828001018",
+      "name": "add_supplier_review_workflow",
+      "hash": "12ccc9b3107c08d95f86bdd180679133"
+    },
+    {
+      "version": "20260828001318",
+      "name": "fix_supplier_review_membership_order",
+      "hash": "00530c8d258849205732e0fc3d724251"
+    },
+    {
+      "version": "20260828001753",
+      "name": "persist_supplier_duplicate_resolution",
+      "hash": "4c6d2dba2f57a8f7b4feea3cd45b4a4a"
+    },
+    {
+      "version": "20260828010049",
+      "name": "revoke_unapproved_supplier_portal_tokens",
+      "hash": "25b58aa133eabe973d72f806dfe5ece6"
+    },
+    {
+      "version": "20260828010346",
+      "name": "lock_down_supplier_review_rpc",
+      "hash": "b5cd987a4fc557e64ab6bf997e74f9ff"
+    },
+    {
+      "version": "20260828080644",
+      "name": "normalize_resend_email_endpoint",
+      "hash": "d64c2286c012b73180240613ad462d54"
+    },
+    {
+      "version": "20260829104359",
+      "name": "reconcile_stale_automation_state",
+      "hash": "89ecfac257654d244f37ed330c88374f"
+    },
+    {
+      "version": "20260829105641",
+      "name": "harden_rls_and_foreign_key_indexes",
+      "hash": "0744abb947824105a9e73574d49d235b"
+    },
+    {
+      "version": "20260829110125",
+      "name": "complete_foreign_key_leading_indexes",
+      "hash": "b89db2ffdf8ea470be883ee37631bc96"
+    },
+    {
+      "version": "20260829163000",
+      "name": "publish_supplier_quote_portal_storage",
+      "hash": "be8a849bb3f0933baa50732e460d5604"
+    },
+    {
+      "version": "20260829164000",
+      "name": "lock_supplier_quote_portal_storage",
+      "hash": "967ef11fc86b2a59f8756a220fd61377"
+    },
+    {
+      "version": "20260829182710",
+      "name": "allow_reviewer_confirm_project_pricing",
+      "hash": "aebae80a87d84937f43ee0664e7b94a0"
+    },
+    {
+      "version": "20260829183041",
+      "name": "scope_project_pricing_confirmation_to_project",
+      "hash": "6a71023d0ec6a6463a339b65e53d1a3d"
+    },
+    {
+      "version": "20260829223722",
+      "name": "harden_price_collection_p0",
+      "hash": "32d9271df23508c95ac2d7ea0d66928b"
+    },
+    {
+      "version": "20260830123000",
+      "name": "enhance_project_pricing_confirmation_audit",
+      "hash": "2366c800f36bf8e20d41900f9b2eb615"
+    },
+    {
+      "version": "20260831092151",
+      "name": "price_collection_p1_workflow",
+      "hash": "eeb20527a93cc55080d78aef945e4b9f"
+    },
+    {
+      "version": "20260831100218",
+      "name": "fix_price_collection_cdf_fx_and_regional_dedup",
+      "hash": "bf968871ed6c889d8b0c90900661497e"
+    },
+    {
+      "version": "20260831102426",
+      "name": "harden_price_collection_schedule_and_audit",
+      "hash": "1e19d1375ecb77261c38a96d70e843fc"
+    },
+    {
+      "version": "20260831105517",
+      "name": "align_price_collection_next_run_to_schedule",
+      "hash": "7d256442d6a11a1343e5451caa198a94"
+    },
+    {
+      "version": "20260831111432",
+      "name": "price_collection_p1_operations",
+      "hash": "a3217d557a1e75750975680eca758011"
+    },
+    {
+      "version": "20260831121728",
+      "name": "price_collection_p2_source_quality_category_schedule_security",
+      "hash": "0bc3f991b58b9e9c0578811a3668b91b"
+    },
+    {
+      "version": "20260831122308",
+      "name": "fix_price_collection_schedule_policy_advisors",
+      "hash": "aa941bd6a6be6214f52d4296ea27a4ca"
+    },
+    {
+      "version": "20260831161050",
+      "name": "fix_talo_rebar_diameter_translation",
+      "hash": "3f1537cb13f69190fd18abc3bf666fa9"
+    },
+    {
+      "version": "20260831181131",
+      "name": "add_price_collection_task_archive",
+      "hash": "f82d8df9d337ecd6bb15d0f635a9174c"
+    },
+    {
+      "version": "20260831182536",
+      "name": "index_price_collection_task_archiver",
+      "hash": "05675b724e31a41cad158d51b5edcb7c"
+    },
+    {
+      "version": "20260831205249",
+      "name": "standardize_talo_rebar_translations",
+      "hash": "b19f0410f6762682a07212a7ea314412"
+    },
+    {
+      "version": "20260831213250",
+      "name": "price_period_semantics",
+      "hash": "477ac073d8230e2233f4fb8d910504c7"
+    },
+    {
+      "version": "20260831230352",
+      "name": "queue_caid_reports_for_parsing",
+      "hash": "cc045121c33e58785766b5a60b3064a2"
+    },
+    {
+      "version": "20260831230546",
+      "name": "restrict_caid_report_parse_queue",
+      "hash": "4c732c7fa8cfa850358eadd27ec5fd82"
+    },
+    {
+      "version": "20260831234752",
+      "name": "bound_caid_historical_backfill",
+      "hash": "4b9197801d018e99bac6c70ad478c05b"
+    },
+    {
+      "version": "20260901151610",
+      "name": "monthly_price_dedup_identity",
+      "hash": "3fb712e1fe70fdce7b17a5eaf57ba565"
+    },
+    {
+      "version": "20260901154353",
+      "name": "prevent_duplicate_price_collection_runs",
+      "hash": "86c6d9a28715e7406823accc23ccd8dd"
+    },
+    {
+      "version": "20260901154925",
+      "name": "advance_price_collection_schedule_after_run",
+      "hash": "a8129aa96c68f4783cf19cd73e2a89d7"
+    },
+    {
+      "version": "20260901172436",
+      "name": "preserve_collection_price_provenance",
+      "hash": "0b7196f5435472ef197c0c02d7ad9dac"
+    },
+    {
+      "version": "20260901192915",
+      "name": "fix_collection_run_hierarchy_p0",
+      "hash": "41e1636614e8e4f7ef098e62bd02459a"
+    },
+    {
+      "version": "20260901193104",
+      "name": "fix_formal_price_admission_p0",
+      "hash": "f771f4b33ff0791b56e75845048597ef"
+    },
+    {
+      "version": "20260901195556",
+      "name": "ai_automation_operations_p1",
+      "hash": "206fd2bc2b67527cea15c7e87e581957"
+    },
+    {
+      "version": "20260901195933",
+      "name": "refine_ai_automation_operations_p1",
+      "hash": "a615cbed54646f1119789c7d2673c5f6"
+    },
+    {
+      "version": "20260902074807",
+      "name": "ai_automation_continuous_assurance_p2",
+      "hash": "8dd8da4365de1adf29bc4d6f6f94a356"
+    },
+    {
+      "version": "20260902084527",
+      "name": "close_agent_automation_p0",
+      "hash": "204df7ca26371ff4a5dcbf4c32541a94"
+    },
+    {
+      "version": "20260902085152",
+      "name": "unify_collection_evidence_identity",
+      "hash": "a1b396885716dbb2cc0362ff4686bcfe"
+    },
+    {
+      "version": "20260902090544",
+      "name": "automation_operations_information_p1",
+      "hash": "5fa023d4101e0fb84f46c304852d06c3"
+    },
+    {
+      "version": "20260902090852",
+      "name": "include_assurance_cron_in_operations_list",
+      "hash": "30841d470d03c39e66cf6c30105a9307"
+    },
+    {
+      "version": "20260902092047",
+      "name": "component_level_automation_assurance_p2",
+      "hash": "94cc62b12b8baba9e7968a5664f660dd"
+    },
+    {
+      "version": "20260902092323",
+      "name": "refine_component_assurance_states",
+      "hash": "8f7947c24f16d96c7b81f4df157f5803"
+    },
+    {
+      "version": "20260902093741",
+      "name": "exclude_running_cron_from_failures",
+      "hash": "7f84acaec29ea88969ff2cf2bdc46c6f"
+    },
+    {
+      "version": "20260902101807",
+      "name": "automation_matrix_and_daily_smoke_assurance",
+      "hash": "5654e167f89fd526a463cb66b6a055ee"
+    },
+    {
+      "version": "20260902111946",
+      "name": "attachment_review_queue_governance",
+      "hash": "b2f58e4f0723ba5af54637b4511bec97"
+    },
+    {
+      "version": "20260902115338",
+      "name": "register_attachment_governance_health",
+      "hash": "d9fed70f76163a5b320df05d2a898085"
+    },
+    {
+      "version": "20260902160922",
+      "name": "analytics_operational_assurance_p2",
+      "hash": "13e2b4140d3b3256a3b2baa39d6685d2"
+    },
+    {
+      "version": "20260902185636",
+      "name": "analytics_approved_health_scope_p0",
+      "hash": "1e83c5ca3c79de94d13b88c9a3821e75"
+    },
+    {
+      "version": "20260902193244",
+      "name": "analytics_decision_readiness_actions_p0",
+      "hash": "81f968de2f324017bcdc6529ccb25bfc"
+    }
+  ],
+  "archived": [
+    {
+      "file": "20260822235258_add_project_pricing_business_p0.sql",
+      "hash": "4f2f71bbe3d549592005a84d056a825c"
+    },
+    {
+      "file": "20260823093941_add_equipment_catalog_p0.sql",
+      "hash": "5474af0317cc93a9abfd5dfe835b9f0f"
+    },
+    {
+      "file": "20260823103528_add_boq_equipment_catalog_matching_p1.sql",
+      "hash": "705a79c99f80ac6b1d5b1917b1e75bbf"
+    },
+    {
+      "file": "20260823164145_equipment_collection_shared_methods_runs_imports_queue.sql",
+      "hash": "c197dbe41c6259644c7bc58997345b5c"
+    },
+    {
+      "file": "20260823213949_equipment_catalog_discovery_and_supplier_api_credentials.sql",
+      "hash": "7f69c253483e013acab4b45b027c64f5"
+    },
+    {
+      "file": "20260823231945_equipment_catalog_collection_candidates.sql",
+      "hash": "9424321d181434d6590b651a7c21e945"
+    },
+    {
+      "file": "20260824023428_equipment_catalog_pdf_parameter_review.sql",
+      "hash": "7b5858d5c9d9b1fd1de04ce625bf07e2"
+    },
+    {
+      "file": "20260824030547_equipment_catalog_parameter_candidate_review_rpc.sql",
+      "hash": "1771b1242d5358040705648aa5f8e05f"
+    },
+    {
+      "file": "20260824152126_equipment_catalog_review_queue.sql",
+      "hash": "7ddf823d274a72f3ec741adf4b163268"
+    },
+    {
+      "file": "20260824183500_equipment_manufacturer_master.sql",
+      "hash": "10e3e47e212062a0a5e3623e2b7b71f5"
+    },
+    {
+      "file": "20260824220056_fix_equipment_collection_runtime_accuracy.sql",
+      "hash": "26340cc72da832132bb800cb76a5d602"
+    },
+    {
+      "file": "20260824220911_prioritize_equipment_document_discovery.sql",
+      "hash": "719c94fdab0113a3528acb02e89a57ce"
+    },
+    {
+      "file": "20260825093000_resume_batched_equipment_collection.sql",
+      "hash": "152eab08fa47e325162dc3fff7bb674b"
+    },
+    {
+      "file": "20260825192747_add_collection_task_delete_policy.sql",
+      "hash": "e9bede9141eb3dd1ef0e14f4fddc1cb4"
+    },
+    {
+      "file": "20260829163000_publish_supplier_quote_portal_storage.sql",
+      "hash": "3f7026021aa97f00609b01a8a9baec6a"
+    },
+    {
+      "file": "20260829220431_harden_price_collection_p0.sql",
+      "hash": "32d9271df23508c95ac2d7ea0d66928b"
+    },
+    {
+      "file": "20260830123000_enhance_project_pricing_confirmation_audit.sql",
+      "hash": "d19a247f1e3bda8e5c63f5a09d0db246"
+    },
+    {
+      "file": "20260831085901_price_collection_p1_workflow.sql",
+      "hash": "eeb20527a93cc55080d78aef945e4b9f"
+    },
+    {
+      "file": "20260831095804_fix_price_collection_cdf_fx_and_regional_dedup.sql",
+      "hash": "bf968871ed6c889d8b0c90900661497e"
+    },
+    {
+      "file": "20260831102008_harden_price_collection_schedule_and_audit.sql",
+      "hash": "927872ad5e54986024bb06b563337165"
+    },
+    {
+      "file": "20260831105245_align_price_collection_next_run_to_schedule.sql",
+      "hash": "7d256442d6a11a1343e5451caa198a94"
+    },
+    {
+      "file": "20260831111118_price_collection_p1_operations.sql",
+      "hash": "a3217d557a1e75750975680eca758011"
+    },
+    {
+      "file": "20260831120021_price_collection_p2_source_quality_category_schedule_security.sql",
+      "hash": "0bc3f991b58b9e9c0578811a3668b91b"
+    },
+    {
+      "file": "20260831122213_fix_price_collection_schedule_policy_advisors.sql",
+      "hash": "aa941bd6a6be6214f52d4296ea27a4ca"
+    },
+    {
+      "file": "20260831180510_add_price_collection_task_archive.sql",
+      "hash": "f82d8df9d337ecd6bb15d0f635a9174c"
+    },
+    {
+      "file": "20260831182453_index_price_collection_task_archiver.sql",
+      "hash": "05675b724e31a41cad158d51b5edcb7c"
+    },
+    {
+      "file": "20260901090000_fix_talo_rebar_diameter_translation.sql",
+      "hash": "3f1537cb13f69190fd18abc3bf666fa9"
+    },
+    {
+      "file": "20260901103000_price_period_semantics.sql",
+      "hash": "477ac073d8230e2233f4fb8d910504c7"
+    },
+    {
+      "file": "20260901103000_standardize_talo_rebar_translations.sql",
+      "hash": "b19f0410f6762682a07212a7ea314412"
+    },
+    {
+      "file": "20260901143000_queue_caid_reports_for_parsing.sql",
+      "hash": "95070d2e65ee171a68b7493c1f102f0c"
+    },
+    {
+      "file": "20260901144500_restrict_caid_report_parse_queue.sql",
+      "hash": "cd1b81f53932fae807495e14ff01a637"
+    },
+    {
+      "file": "20260901150000_bound_caid_historical_backfill.sql",
+      "hash": "26b5de7297b8eb94f74c74b4914ac362"
+    },
+    {
+      "file": "20260901150207_monthly_price_dedup_identity.sql",
+      "hash": "3fb712e1fe70fdce7b17a5eaf57ba565"
+    },
+    {
+      "file": "20260901154500_prevent_duplicate_price_collection_runs.sql",
+      "hash": "86c6d9a28715e7406823accc23ccd8dd"
+    },
+    {
+      "file": "20260901155000_advance_price_collection_schedule_after_run.sql",
+      "hash": "a8129aa96c68f4783cf19cd73e2a89d7"
+    },
+    {
+      "file": "20260901171713_preserve_collection_price_provenance.sql",
+      "hash": "0b7196f5435472ef197c0c02d7ad9dac"
+    },
+    {
+      "file": "20260902090000_fix_agent_automation_p0.sql",
+      "hash": "48ceb6b38c43901c51ba9b611adfde02"
+    },
+    {
+      "file": "20260902103000_ai_automation_operations_p1.sql",
+      "hash": "a615cbed54646f1119789c7d2673c5f6"
+    },
+    {
+      "file": "20260902120000_ai_automation_continuous_assurance_p2.sql",
+      "hash": "8dd8da4365de1adf29bc4d6f6f94a356"
+    },
+    {
+      "file": "20260902130000_close_agent_automation_p0.sql",
+      "hash": "204df7ca26371ff4a5dcbf4c32541a94"
+    },
+    {
+      "file": "20260902130100_unify_collection_evidence_identity.sql",
+      "hash": "a1b396885716dbb2cc0362ff4686bcfe"
+    },
+    {
+      "file": "20260902131100_automation_operations_information_p1.sql",
+      "hash": "5fa023d4101e0fb84f46c304852d06c3"
+    },
+    {
+      "file": "20260902131200_include_assurance_cron_in_operations_list.sql",
+      "hash": "30841d470d03c39e66cf6c30105a9307"
+    },
+    {
+      "file": "20260902132000_component_level_automation_assurance_p2.sql",
+      "hash": "94cc62b12b8baba9e7968a5664f660dd"
+    },
+    {
+      "file": "20260902132100_refine_component_assurance_states.sql",
+      "hash": "8f7947c24f16d96c7b81f4df157f5803"
+    },
+    {
+      "file": "20260902133000_exclude_running_cron_from_failures.sql",
+      "hash": "2cbd9eb337c1d8f13049eb161698be66"
+    },
+    {
+      "file": "20260902134000_automation_matrix_and_daily_smoke_assurance.sql",
+      "hash": "5654e167f89fd526a463cb66b6a055ee"
+    },
+    {
+      "file": "20260902135000_attachment_review_queue_governance.sql",
+      "hash": "b2f58e4f0723ba5af54637b4511bec97"
+    },
+    {
+      "file": "20260902135100_register_attachment_governance_health.sql",
+      "hash": "d9fed70f76163a5b320df05d2a898085"
+    },
+    {
+      "file": "20260903090000_analytics_operational_assurance_p2.sql",
+      "hash": "13e2b4140d3b3256a3b2baa39d6685d2"
+    },
+    {
+      "file": "20260903094500_analytics_approved_health_scope_p0.sql",
+      "hash": "1e83c5ca3c79de94d13b88c9a3821e75"
+    },
+    {
+      "file": "20260903113000_analytics_decision_readiness_actions_p0.sql",
+      "hash": "81f968de2f324017bcdc6529ccb25bfc"
+    }
+  ]
+}

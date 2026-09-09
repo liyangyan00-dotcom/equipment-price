@@ -6,12 +6,23 @@ export type DashboardHeroData = {
 };
 
 export type DashboardStat = {
-  key: "equipment" | "material" | "supplier" | "pending" | "lead" | "risk";
+  key:
+    | "equipment"
+    | "material"
+    | "supplier"
+    | "pending"
+    | "lead"
+    | "risk"
+    | "running"
+    | "failed"
+    | "overdue"
+    | "today";
   title: string;
   value: string;
   description: string;
   trendLabel: string;
   trendDirection: TrendDirection;
+  href: string;
 };
 
 export type AiWorkbenchOverview = {
@@ -52,6 +63,7 @@ export type LatestPriceUpdate = Record<string, unknown> & {
   sourceType: "ai_quote_recognition" | "supplier_email" | "ai_price_collection" | "manual";
   confidenceLevel: ConfidenceLevel;
   aiTagged?: boolean;
+  href?: string;
 };
 
 export type PendingReviewTask = Record<string, unknown> & {
@@ -66,7 +78,9 @@ export type PendingReviewTask = Record<string, unknown> & {
   riskLevel: RiskLevel;
   status: AiTaskStatus;
   createdAtLabel: string;
+  updatedAt?: string;
   actions: string[];
+  href?: string;
 };
 
 export type AiInsightCardData = {
@@ -77,6 +91,8 @@ export type AiInsightCardData = {
   judgment: string;
   action: string;
   tone: "info" | "warning" | "ai";
+  breakdown?: [string, string][];
+  changeLabel?: string;
 };
 
 export type DistributionDatum = {
@@ -98,6 +114,7 @@ export type DistributionAnalysis = {
 export type DashboardRiskAlert = Record<string, unknown> & {
   id: string;
   title: string;
+  count?: number;
   riskType:
     | "expired_price"
     | "low_price_outlier"
@@ -111,6 +128,7 @@ export type DashboardRiskAlert = Record<string, unknown> & {
   actionLabel: string;
   aiAdvice: string;
   recommendedOperation: string;
+  href?: string;
 };
 
 export type QuickAction = {
@@ -118,6 +136,42 @@ export type QuickAction = {
   description: string;
   href: string;
   tone: "primary" | "success" | "ai" | "warning" | "cyan" | "slate";
+};
+
+export type BusinessFlowStage = {
+  key: "collected" | "pending" | "ready" | "transferred" | "usable";
+  title: string;
+  value: number;
+  description: string;
+  href: string;
+  tone: "blue" | "orange" | "green" | "purple" | "cyan";
+};
+
+export type BusinessFlowOverview = {
+  stages: BusinessFlowStage[];
+  conversionRate: number;
+  aiSummary: string;
+  recommendedAction: string;
+  actionHref: string;
+  attention: "success" | "warning";
+};
+
+export type DashboardPayload = {
+  hero: DashboardHeroData;
+  stats: DashboardStat[];
+  aiWorkbenchOverview: AiWorkbenchOverview;
+  priceTrendData: PriceTrendPoint[];
+  trendSummaries: TrendSummary[];
+  latestPriceUpdates: LatestPriceUpdate[];
+  pendingReviewTasks: PendingReviewTask[];
+  aiInsightCards: AiInsightCardData[];
+  distributionAnalyses: DistributionAnalysis[];
+  riskAlerts: DashboardRiskAlert[];
+  quickActions: QuickAction[];
+  businessFlow: BusinessFlowOverview;
+  rangeDays: 7 | 30 | 90;
+  source: "supabase";
+  generatedAt: string;
 };
 
 export const dashboardHero: DashboardHeroData = {
@@ -133,6 +187,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "覆盖泵、阀门、电气、自控等设备",
     trendLabel: "较上月 +8.6%",
     trendDirection: "up",
+    href: "/equipment-prices",
   },
   {
     key: "material",
@@ -141,6 +196,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "覆盖钢材、水泥、砂石和运输",
     trendLabel: "较上月 +6.3%",
     trendDirection: "up",
+    href: "/material-prices",
   },
   {
     key: "supplier",
@@ -149,6 +205,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "含设备商、地材商与物流方",
     trendLabel: "新增 126 家",
     trendDirection: "up",
+    href: "/suppliers",
   },
   {
     key: "pending",
@@ -157,6 +214,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "识别结果需进入人工确认",
     trendLabel: "较昨日 -12",
     trendDirection: "down",
+    href: "/pending-quotes",
   },
   {
     key: "lead",
@@ -165,6 +223,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "AI采集与人工新增线索",
     trendLabel: "较昨日 +15%",
     trendDirection: "up",
+    href: "/price-leads",
   },
   {
     key: "risk",
@@ -173,6 +232,7 @@ export const dashboardStats: DashboardStat[] = [
     description: "过期、异常、缺参数或低置信度",
     trendLabel: "较昨日 +6",
     trendDirection: "up",
+    href: "/pending-quotes",
   },
 ];
 
@@ -461,7 +521,7 @@ export const quickActions: QuickAction[] = [
   { title: "新增价格", description: "手工录价", href: "/equipment-prices", tone: "primary" },
   { title: "上传报价", description: "AI识别", href: "/ai-quote-recognition", tone: "success" },
   { title: "AI采集线索", description: "自动采集", href: "/ai-price-collection", tone: "ai" },
-  { title: "创建询价", description: "供应商询价", href: "/inquiries", tone: "warning" },
+  { title: "创建询价", description: "供应商询价", href: "/inquiries/create", tone: "warning" },
   { title: "AI自动套价", description: "智能套价", href: "/project-pricing", tone: "ai" },
   { title: "生成报告", description: "分析输出", href: "/ai-report-center", tone: "slate" },
 ];

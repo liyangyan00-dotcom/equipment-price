@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-09",
+  "base": "6292618fad26918f92c0b8e37198c4194336eca2",
+  "remoteAtFetch": "6292618fad26918f92c0b8e37198c4194336eca2",
+  "validatedSourceTree": "e05c635593dcd39d6b6a16240c781d03d476be3a",
+  "suggestedBranch": "codex/prepush-business-review-20260909",
+  "candidateChangedFileCount": 828,
+  "candidatePathsFile": "docs/final/PUSH_CANDIDATE_PATHS_2026-09-09.txt",
+  "preparationDocuments": [
+    "docs/final/PUSH_PREPARATION_2026-09-09.md",
+    "docs/final/PUSH_CANDIDATE_PATHS_2026-09-09.txt",
+    "docs/final/PUSH_CANDIDATE_MANIFEST_2026-09-09.json"
+  ],
+  "deferred": [
+    "docs/screenshot-diffs/round-6a/README.md",
+    "docs/screenshot-diffs/round-6a/ai-price-collection.png",
+    "docs/screenshot-diffs/round-6a/ai-quote-recognition.png",
+    "docs/screenshot-diffs/round-6a/pending-quotes.png",
+    "docs/screenshot-diffs/round-6a/price-leads.png",
+    "docs/screenshot-diffs/round-6b/README.md",
+    "docs/screenshot-diffs/round-6b/ai-inquiry-letter.png",
+    "docs/screenshot-diffs/round-6b/ai-report-center.png",
+    "docs/screenshot-diffs/round-6b/ai-workbench.png",
+    "docs/screenshot-diffs/round-6b/boq-parse.png",
+    "docs/supplier-data/01_SUPPLIER_ENTITY_DISAMBIGUATION_LEDGER.md",
+    "docs/supplier-data/02_P0_BUSINESS_CONTACT_QUALIFICATION_RISK_AUDIT.md",
+    "docs/supplier-data/03_P1_AUTOMATION_POWER_VERIFICATION_LEDGER.md",
+    "docs/supplier-data/04_P2_LAB_AUXILIARY_VERIFICATION_LEDGER.md",
+    "docs/supplier-data/05_SUPPLIER_CONFLICT_DUPLICATE_MANUAL_REVIEW.md",
+    "docs/supplier-data/06_SYSTEM_WRITE_AND_INQUIRY_ADMISSION.md"
+  ],
+  "note": "The validated source tree precedes these three preparation documents. No branch, commit, push or cloud migration has been executed.",
+  "validation": {
+    "node": "24.15.0",
+    "next": "16.3.4",
+    "tests": {
+      "pass": 191,
+      "fail": 0,
+      "skip": 0
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 4
+    },
+    "build": "passed without .env.local",
+    "browser": "passed using synthetic APIs",
+    "dependencyAudit": 0,
+    "migrations": {
+      "historical": 172,
+      "pending": 3,
+      "preservedOriginals": 52
+    },
+    "historicalSqlEofWarnings": 29
+  }
+}

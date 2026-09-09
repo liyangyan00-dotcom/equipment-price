@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, BrainCircuit, SearchCheck, TriangleAlert, Users } from "lucide-react";
 import { AiBadge } from "@/components/badges";
 import { BaseCard } from "@/components/common";
@@ -43,6 +44,12 @@ const cardMeta = {
   rows: [string, string][];
 }>;
 
+const actionHref = {
+  lead: "/price-leads",
+  gap: "/ai-price-collection",
+  inquiry: "/inquiries/create",
+} satisfies Record<AiInsightCardData["id"], string>;
+
 type DashboardInsightCardsProps = {
   data: AiInsightCardData[];
 };
@@ -58,7 +65,7 @@ export function DashboardInsightCards({ data }: DashboardInsightCardsProps) {
         action={<AiBadge label="AI洞察" icon="analysis" />}
       />
 
-      <section className="grid gap-3 lg:grid-cols-3">
+      <section className="grid gap-2.5 md:grid-cols-3">
         {data.map((item) => {
           const meta = cardMeta[item.id];
           const Icon = meta.icon;
@@ -66,7 +73,7 @@ export function DashboardInsightCards({ data }: DashboardInsightCardsProps) {
           return (
             <article
               key={item.id}
-              className="rounded-[14px] border border-borderSoft bg-[linear-gradient(180deg,#FFFFFF,#F8FBFF)] p-3.5 shadow-sm"
+              className="rounded-[12px] border border-borderSoft bg-[linear-gradient(180deg,#FFFFFF,#F8FBFF)] p-3 shadow-sm transition hover:border-ai-border hover:shadow-card"
             >
               <div className="flex items-center justify-center">
                 <span className={`flex size-9 items-center justify-center rounded-[12px] ${meta.iconClass}`}>
@@ -79,12 +86,10 @@ export function DashboardInsightCards({ data }: DashboardInsightCardsProps) {
                 <p className={`text-[30px] font-semibold leading-none ${meta.metricClass}`}>{item.value}</p>
                 <span className="pb-1 text-[12px] font-semibold text-textMuted">{item.unit}</span>
               </div>
-              <p className="mt-1 text-center text-[11px] font-semibold text-success">
-                较昨日 ↑ {item.id === "inquiry" ? "9%" : item.id === "gap" ? "8%" : "15%"}
-              </p>
+              <p className="mt-1 text-center text-[11px] font-semibold text-success">{item.changeLabel || "来自实时业务数据"}</p>
 
               <div className="mt-3 space-y-1.5 border-t border-borderSoft pt-2.5">
-                {meta.rows.map(([label, value]) => (
+                {(item.breakdown || meta.rows).map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between text-[12px]">
                     <span className="font-medium text-textSecondary">{label}</span>
                     <span className="font-semibold text-textMain">{value}</span>
@@ -93,10 +98,14 @@ export function DashboardInsightCards({ data }: DashboardInsightCardsProps) {
               </div>
 
               <div className="mt-3 flex justify-center">
-                <span className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-3 py-1.5 text-[12px] font-semibold text-primary">
+                <Link
+                  href={actionHref[item.id]}
+                  className="inline-flex items-center gap-1 rounded-pill bg-primary-soft px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  aria-label={item.action}
+                >
                   {item.action}
                   <ArrowRight className="size-3.5" aria-hidden="true" />
-                </span>
+                </Link>
               </div>
             </article>
           );

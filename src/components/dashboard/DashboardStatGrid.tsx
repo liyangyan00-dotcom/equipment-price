@@ -1,9 +1,15 @@
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   ChartNoAxesColumnIncreasing,
   FileText,
   Layers3,
   ShieldAlert,
+  CircleDotDashed,
+  CircleX,
+  ClockAlert,
+  DatabaseZap,
+  Minus,
   TrendingDown,
   TrendingUp,
   UsersRound,
@@ -19,6 +25,10 @@ const statMeta: Record<DashboardStat["key"], { icon: LucideIcon; tone: "blue" | 
   pending: { icon: FileText, tone: "orange", unit: "项" },
   lead: { icon: ChartNoAxesColumnIncreasing, tone: "cyan", unit: "条" },
   risk: { icon: ShieldAlert, tone: "red", unit: "条" },
+  running: { icon: CircleDotDashed, tone: "cyan", unit: "项" },
+  failed: { icon: CircleX, tone: "red", unit: "项" },
+  overdue: { icon: ClockAlert, tone: "orange", unit: "项" },
+  today: { icon: DatabaseZap, tone: "green", unit: "条" },
 };
 
 const toneClass = {
@@ -66,28 +76,31 @@ type DashboardStatGridProps = {
 
 export function DashboardStatGrid({ data }: DashboardStatGridProps) {
   return (
-    <section className="grid gap-2.5 md:grid-cols-3 lg:grid-cols-6">
+    <section className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-2.5">
       {data.map((stat) => {
         const meta = statMeta[stat.key];
         const Icon = meta.icon;
-        const TrendIcon = stat.trendDirection === "down" ? TrendingDown : TrendingUp;
+        const TrendIcon = stat.trendDirection === "down" ? TrendingDown : stat.trendDirection === "flat" ? Minus : TrendingUp;
+        const isConcernMetric = ["pending", "failed", "risk", "overdue"].includes(stat.key);
 
         return (
-          <article
+          <Link
             key={stat.key}
+            href={stat.href}
+            aria-label={`查看${stat.title}`}
             className={cn(
-              "flex h-[110px] flex-col justify-between overflow-hidden rounded-card border px-3 py-2.5 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover",
+              "group flex h-[104px] min-w-0 flex-col justify-between overflow-hidden rounded-card border px-2.5 py-2.5 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 lg:px-3",
               toneClass[meta.tone].card
             )}
           >
             <div className="flex items-start justify-between gap-3">
               <p className={cn("truncate text-[12px] font-semibold", toneClass[meta.tone].title)}>{stat.title}</p>
-              <span className={cn("relative flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-gradient-to-br", toneClass[meta.tone].icon)}>
+              <span className={cn("relative flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br lg:size-9", toneClass[meta.tone].icon)}>
                 <span className="absolute inset-x-1 bottom-0 h-2 rounded-full bg-white/20 blur-[2px]" />
-                <Icon className="relative size-[22px] drop-shadow-[0_2px_2px_rgba(15,23,42,0.20)]" aria-hidden="true" />
+                <Icon className="relative size-[18px] drop-shadow-[0_2px_2px_rgba(15,23,42,0.20)] lg:size-5" aria-hidden="true" />
               </span>
             </div>
-            <p className={cn("text-[25px] font-semibold leading-none tracking-normal", toneClass[meta.tone].value)}>
+            <p className={cn("text-[23px] font-semibold leading-none tracking-normal tabular-nums lg:text-[25px]", toneClass[meta.tone].value)}>
               {stat.value}
               <span className="ml-1 text-[11px] font-semibold text-textMuted">{meta.unit}</span>
             </p>
@@ -95,15 +108,15 @@ export function DashboardStatGrid({ data }: DashboardStatGridProps) {
               <span
                 className={cn(
                   "inline-flex shrink-0 items-center gap-1 rounded-pill bg-white/72 px-1.5 py-0.5 font-semibold shadow-sm",
-                  stat.trendDirection === "down" ? "text-success" : stat.key === "risk" ? "text-warning" : "text-success"
+                  stat.trendDirection === "flat" ? "text-textMuted" : stat.trendDirection === "down" ? "text-success" : isConcernMetric ? "text-warning" : "text-success"
                 )}
               >
                 <TrendIcon className="size-3.5" aria-hidden="true" />
                 {stat.trendLabel}
               </span>
-              <span className="truncate text-textMuted">{stat.description}</span>
+              <span className="hidden truncate text-textMuted sm:inline" title={stat.description}>{stat.description}</span>
             </div>
-          </article>
+          </Link>
         );
       })}
     </section>

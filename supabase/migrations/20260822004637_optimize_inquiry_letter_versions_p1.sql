@@ -1,0 +1,1 @@
+create index if not exists wpi_inquiry_letter_versions_created_by_idx on public.wpi_inquiry_letter_versions (created_by); alter policy wpi_inquiry_letter_versions_insert on public.wpi_inquiry_letter_versions with check (private.wpi_has_permission(organization_id, 'inquiry.write') and created_by = (select auth.uid()));;

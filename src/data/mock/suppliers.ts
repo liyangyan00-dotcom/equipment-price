@@ -1,4 +1,18 @@
 import type { ConfidenceLevel, RiskLevel } from "@/types/common";
+import { importedKanangaSuppliers } from "./importedKanangaSuppliers";
+import {
+  p0SupplierDueDiligenceById,
+  type SupplierDueDiligence,
+} from "./p0SupplierDueDiligence";
+import { p0SupplierResearchById, type SupplierWebResearch } from "./p0SupplierResearch";
+import { p1SupplierDueDiligenceById } from "./p1SupplierDueDiligence";
+import { p1SupplierResearchById } from "./p1SupplierResearch";
+import { p2SupplierDueDiligenceById } from "./p2SupplierDueDiligence";
+import { p2SupplierResearchById } from "./p2SupplierResearch";
+import {
+  supplierVerificationById,
+  type SupplierVerificationRecord,
+} from "./supplierVerificationRegistry";
 
 export type SupplierRecord = Record<string, unknown> & {
   id: string;
@@ -21,192 +35,76 @@ export type SupplierRecord = Record<string, unknown> & {
   aiEvaluation: string;
   riskLevel: RiskLevel;
   status: "活跃" | "待复核" | "暂停";
+  englishName?: string;
+  phone?: string;
+  website?: string;
+  dataCompleteness?: number;
+  importBatch?: string;
+  sourceFile?: string;
+  sourceSheet?: string;
+  sourceRows?: number[];
+  bidPackages?: string[];
+  equipmentLists?: string[];
+  procurementStrategies?: string[];
+  strengths?: string[];
+  introductions?: string[];
+  mainProducts?: string[];
+  addresses?: string[];
+  contactDetails?: string;
+  notes?: string[];
+  webResearch?: SupplierWebResearch;
+  dueDiligence?: SupplierDueDiligence;
+  verification?: SupplierVerificationRecord;
 };
 
-export const supplierKpis = [
-  { label: "供应商总数", value: "286", unit: "家", trend: "较上月 +18", description: "核心供应商池" },
-  { label: "AI推荐供应商", value: "38", unit: "家", trend: "占比 13.3%", description: "适配项目需求" },
-  { label: "待补全资料", value: "24", unit: "家", trend: "占比 8.4%", description: "缺证照或联系人" },
-  { label: "高评分供应商", value: "124", unit: "家", trend: "评分 >80", description: "优先询价对象" },
-  { label: "高风险供应商", value: "18", unit: "家", trend: "风险等级 高", description: "需谨慎使用" },
-  { label: "今日新增线索", value: "12", unit: "条", trend: "较昨日 +3", description: "AI新增供应商" },
-];
+export const supplierRecords: SupplierRecord[] = importedKanangaSuppliers.map((supplier) => {
+  const research =
+    p0SupplierResearchById[supplier.id] ??
+    p1SupplierResearchById[supplier.id] ??
+    p2SupplierResearchById[supplier.id];
+  const dueDiligence =
+    p0SupplierDueDiligenceById[supplier.id] ??
+    p1SupplierDueDiligenceById[supplier.id] ??
+    p2SupplierDueDiligenceById[supplier.id];
+  const verificationBatch = p0SupplierResearchById[supplier.id]
+    ? "P0"
+    : p1SupplierResearchById[supplier.id]
+      ? "P1"
+      : p2SupplierResearchById[supplier.id]
+        ? "P2"
+        : "";
+  const officialPhone = research?.officialPhone;
+  const officialEmail = research?.officialEmail;
+  const officialWebsite = research?.officialWebsite;
 
-export const supplierRecords: SupplierRecord[] = [
-  {
-    id: "SUP-001",
-    supplierCode: "SUP-202506-001",
-    supplierName: "上海凯泉泵业（集团）有限公司",
-    countryCode: "CN",
-    countryRegion: "中国",
-    category: "制造商",
-    mainScope: "水泵、成套供水设备",
-    contact: "张伟",
-    whatsapp: "+86 138 0013 8000",
-    email: "zhangwei@kaiquan.com",
-    quoteCount: 46,
-    lastQuoteAt: "2026-05-20",
-    responseSpeed: "快",
-    technicalCapability: 90,
-    deliveryRisk: "low",
-    overallScore: 92,
-    confidence: "A",
-    aiEvaluation: "重点合作，历史合作 5 次",
-    riskLevel: "low",
-    status: "活跃",
-  },
-  {
-    id: "SUP-002",
-    supplierCode: "SUP-202506-002",
-    supplierName: "天津博华泵业有限公司",
-    countryCode: "CN",
-    countryRegion: "中国",
-    category: "制造商",
-    mainScope: "水泵、阀门",
-    contact: "李娜",
-    whatsapp: "+86 139 2001 5678",
-    email: "lina@bhpuaxia.com",
-    quoteCount: 28,
-    lastQuoteAt: "2026-05-18",
-    responseSpeed: "较快",
-    technicalCapability: 86,
-    deliveryRisk: "low",
-    overallScore: 88,
-    confidence: "B",
-    aiEvaluation: "响应及时，部分型号需复核",
-    riskLevel: "medium",
-    status: "待复核",
-  },
-  {
-    id: "SUP-003",
-    supplierCode: "SUP-202506-003",
-    supplierName: "Kinshasa Water Solutions SARL",
-    countryCode: "CD",
-    countryRegion: "刚果金",
-    category: "本地供应商",
-    mainScope: "管材、阀门、五金配件",
-    contact: "Jean M.",
-    whatsapp: "+243 81 234 5678",
-    email: "jean.m@kws.cd",
-    quoteCount: 17,
-    lastQuoteAt: "2026-05-17",
-    responseSpeed: "一般",
-    technicalCapability: 72,
-    deliveryRisk: "medium",
-    overallScore: 72,
-    confidence: "C",
-    aiEvaluation: "本地服务强，资料需补全",
-    riskLevel: "medium",
-    status: "活跃",
-  },
-  {
-    id: "SUP-004",
-    supplierCode: "SUP-202506-004",
-    supplierName: "Aqua Congo Services SARL",
-    countryCode: "CD",
-    countryRegion: "刚果金",
-    category: "本地供应商",
-    mainScope: "水泵维修、安装服务",
-    contact: "Patrick K.",
-    whatsapp: "+243 89 876 4321",
-    email: "patrick@aquacongo.cd",
-    quoteCount: 12,
-    lastQuoteAt: "2026-05-16",
-    responseSpeed: "较慢",
-    technicalCapability: 68,
-    deliveryRisk: "medium",
-    overallScore: 68,
-    confidence: "D",
-    aiEvaluation: "资料补全缺口较多",
-    riskLevel: "high",
-    status: "待复核",
-  },
-  {
-    id: "SUP-005",
-    supplierCode: "SUP-202506-005",
-    supplierName: "Grundfos South Africa (Pty)Ltd",
-    countryCode: "ZA",
-    countryRegion: "南非",
-    category: "分销商",
-    mainScope: "水泵、机电设备",
-    contact: "Thabo N.",
-    whatsapp: "+27 71 123 4567",
-    email: "thabo.n@grundfos.com",
-    quoteCount: 36,
-    lastQuoteAt: "2026-05-15",
-    responseSpeed: "快",
-    technicalCapability: 91,
-    deliveryRisk: "low",
-    overallScore: 91,
-    confidence: "A",
-    aiEvaluation: "值得优先询价",
-    riskLevel: "low",
-    status: "活跃",
-  },
-  {
-    id: "SUP-006",
-    supplierCode: "SUP-202506-006",
-    supplierName: "Xylem Water Solutions South Africa",
-    countryCode: "ZA",
-    countryRegion: "南非",
-    category: "分销商",
-    mainScope: "水处理设备、仪表",
-    contact: "Lindiwe M.",
-    whatsapp: "+27 82 987 6543",
-    email: "lindiwe.m@xylem.com",
-    quoteCount: 31,
-    lastQuoteAt: "2026-05-14",
-    responseSpeed: "快",
-    technicalCapability: 88,
-    deliveryRisk: "low",
-    overallScore: 89,
-    confidence: "A",
-    aiEvaluation: "长期合作，技术响应好",
-    riskLevel: "low",
-    status: "活跃",
-  },
-  {
-    id: "SUP-007",
-    supplierCode: "SUP-202506-007",
-    supplierName: "KSB Pumps & Valves GmbH",
-    countryCode: "DE",
-    countryRegion: "德国",
-    category: "制造商",
-    mainScope: "水泵、阀门",
-    contact: "Michael S.",
-    whatsapp: "+49 151 2345 6789",
-    email: "michael.s@ksb.com",
-    quoteCount: 44,
-    lastQuoteAt: "2026-05-13",
-    responseSpeed: "快",
-    technicalCapability: 94,
-    deliveryRisk: "low",
-    overallScore: 90,
-    confidence: "A",
-    aiEvaluation: "技术能力强，交付周期较长",
-    riskLevel: "low",
-    status: "活跃",
-  },
-  {
-    id: "SUP-008",
-    supplierCode: "SUP-202506-008",
-    supplierName: "VAG Austria GmbH",
-    countryCode: "AT",
-    countryRegion: "奥地利",
-    category: "制造商",
-    mainScope: "阀门、管件",
-    contact: "Anna W.",
-    whatsapp: "+43 664 123 4567",
-    email: "anna.w@vag-group.com",
-    quoteCount: 21,
-    lastQuoteAt: "2026-05-12",
-    responseSpeed: "较快",
-    technicalCapability: 87,
-    deliveryRisk: "medium",
-    overallScore: 87,
-    confidence: "B",
-    aiEvaluation: "优先考虑，但需确认交期",
-    riskLevel: "medium",
-    status: "活跃",
-  },
+  return {
+    ...supplier,
+    phone: officialPhone && !officialPhone.startsWith("待") ? officialPhone : supplier.phone,
+    email: officialEmail && !officialEmail.startsWith("待") ? officialEmail : supplier.email,
+    website: officialWebsite && !officialWebsite.startsWith("待") ? officialWebsite : supplier.website,
+    aiEvaluation: research
+      ? research.verificationStatus === "verified_official"
+        ? `已完成 ${verificationBatch} 联网核验（${research.sourceConfidence}级），正式询价前仍需人工确认项目参数与商务条件。`
+        : `已完成 ${verificationBatch} 初步检索（${research.sourceConfidence}级），官方主体或联系方式仍需人工补充核验。`
+      : supplier.aiEvaluation,
+    webResearch: research,
+    dueDiligence,
+    verification: supplierVerificationById[supplier.id],
+  };
+});
+
+const pendingCompletionCount = supplierRecords.filter((record) =>
+  Boolean(record.verification?.missingFields.length),
+).length;
+const highScoreCount = supplierRecords.filter((record) => record.overallScore >= 80).length;
+const highRiskCount = supplierRecords.filter((record) => record.riskLevel === "high" || record.deliveryRisk === "high").length;
+const researchedCount = supplierRecords.filter((record) => Boolean(record.webResearch)).length;
+
+export const supplierKpis = [
+  { label: "供应商总数", value: String(supplierRecords.length), unit: "家", trend: "本次导入 +33", description: "卡南加项目供应商池" },
+  { label: "AI推荐供应商", value: String(researchedCount), unit: "家", trend: "P0/P1/P2 已覆盖", description: "已完成联网研究整理" },
+  { label: "待补全资料", value: String(pendingCompletionCount), unit: "家", trend: "进入人工审核", description: "存在缺失或待核验字段" },
+  { label: "高评分供应商", value: String(highScoreCount), unit: "家", trend: "评分 ≥80", description: "建议优先核验" },
+  { label: "高风险供应商", value: String(highRiskCount), unit: "家", trend: "风险等级高", description: "需谨慎使用" },
+  { label: "新增供应商", value: String(supplierRecords.length), unit: "家", trend: "Excel 导入", description: "营销阶段采购建议" },
 ];
